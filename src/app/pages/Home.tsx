@@ -1,26 +1,6 @@
 import { motion } from "motion/react";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { Play, Users, Award, Calendar } from "lucide-react";
 
 export function Home() {
-  const features = [
-    {
-      icon: Users,
-      title: "Expert Instructors",
-      description: "Learn from the best in the industry",
-    },
-    {
-      icon: Award,
-      title: "Award-Winning",
-      description: "Recognition for excellence in dance education",
-    },
-    {
-      icon: Calendar,
-      title: "Flexible Schedules",
-      description: "Classes that fit your lifestyle",
-    },
-  ];
-
   const videos = [
     {
       title: "Say My Name - Choreography Visual",
@@ -162,26 +142,6 @@ export function Home() {
             </p>
           </motion.div>
 
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-8 mt-16">
-            {features.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                whileHover={{ y: -5 }}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 p-8 group hover:border-red-600/50 transition-all duration-300"
-              >
-                <feature.icon className="w-12 h-12 text-red-600 mb-4 group-hover:scale-110 transition-transform duration-300" />
-                <h3 className="font-['Oswald'] text-2xl text-white mb-2 tracking-wide">
-                  {feature.title}
-                </h3>
-                <p className="text-white/70">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
