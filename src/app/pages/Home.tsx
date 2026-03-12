@@ -23,12 +23,8 @@ export function Home() {
 
   const videos = [
     {
-      title: "Choreography Montage",
-      thumbnail: "https://images.unsplash.com/photo-1767866388178-bfbf5727aefe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYW5jZSUyMHN0dWRpbyUyMGNob3Jlb2dyYXBoeSUyMHBlcmZvcm1hbmNlfGVufDF8fHx8MTc3MzM0Mjc3OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    },
-    {
-      title: "Teaching: Drills & Technique",
-      thumbnail: "https://images.unsplash.com/photo-1696627645060-2fccaf4b0b5f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoaXAlMjBob3AlMjBkYW5jZSUyMGNsYXNzJTIwdHJhaW5pbmd8ZW58MXx8fHwxNzczMzQyNzc5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      title: "Say My Name - Choreography Visual",
+      videoSrc: "/assets/Say My Name Visual.mov",
     },
   ];
 
@@ -206,46 +202,39 @@ export function Home() {
             <div className="h-1 w-32 bg-red-600 mx-auto" />
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {videos.map((video, index) => (
-              <motion.div
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto"
+          >
+            {videos.map((video) => (
+              <div
                 key={video.title}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2, duration: 0.6 }}
-                whileHover={{ scale: 1.02 }}
                 className="group cursor-pointer relative overflow-hidden"
               >
-                <div className="aspect-video relative">
-                  <ImageWithFallback
-                    src={video.thumbnail}
-                    alt={video.title}
+                <div className="aspect-video relative bg-black">
+                  <video
+                    controls
                     className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-300" />
-                  
-                  {/* Play Button */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center group-hover:bg-red-700 transition-colors duration-300"
-                    >
-                      <Play className="w-10 h-10 text-white ml-1" fill="white" />
-                    </motion.div>
-                  </div>
+                    poster=""
+                  >
+                    <source src={video.videoSrc} type="video/quicktime" />
+                    <source src={video.videoSrc} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
 
                   {/* Title Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent">
+                  <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent pointer-events-none">
                     <h3 className="font-['Oswald'] text-2xl text-white tracking-wide">
                       {video.title}
                     </h3>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 

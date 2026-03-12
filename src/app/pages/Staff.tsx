@@ -1,36 +1,26 @@
 import { motion } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { Instagram, Youtube, Mail } from "lucide-react";
+import trevorHeadshot from "figma:asset/69f64a3c799f1fabeacf6ddabcb8ae01b6b49fd6.png";
+import aydinAction from "figma:asset/88d68ba2f13ce1e35b7a91b38cd7ef3ebbd3c932.png";
 
 export function Staff() {
   const staffMembers = [
     {
-      name: "Jordan Martinez",
-      role: "Artistic Director & Head Choreographer",
-      image: "https://images.unsplash.com/photo-1615794239747-49e7d398a930?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYW5jZSUyMGluc3RydWN0b3IlMjBwb3J0cmFpdCUyMHByb2Zlc3Npb25hbHxlbnwxfHx8fDE3NzMzNDI4Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      bio: "With over 15 years of experience in contemporary and hip-hop, Jordan has choreographed for major music artists and dance competitions worldwide. Their innovative approach blends technical precision with raw emotional expression, pushing dancers to explore new boundaries.",
-      specialties: ["Contemporary", "Hip-Hop", "Choreography"],
+      name: "Trevor Mazzei",
+      role: "Co-Founder, Choreographer & Educator",
+      headshot: trevorHeadshot,
+      actionShot: trevorHeadshot,
+      bio: "Trevor Mazzei is a choreographer and educator dedicated to developing strong dancers with confident, resilient minds. A graduate of the University of Connecticut with a degree in Psychology, he integrates mental wellness into his rehearsal spaces, fostering environments where dancers feel supported, seen, and challenged. Originally from Long Island, New York, Trevor developed a deep appreciation for movement at an early age and expanded his training through conventions and intensives such as Theresa Stone's Instincts. He also pursued independent study at Broadway Dance Center, Peridance, Steps on Broadway, and PMT House of Dance, training under renowned choreographers in Contemporary, Hip Hop, Breaking, Jazz, and Street Jazz. During his time at the University of Connecticut, he served as the D.E.I. Executive Board Member and choreographer for the UConn Dance Company, advocating for inclusive and safe spaces within the company. Trevor's choreography has earned numerous awards and adjudications at both regional and national competitions, including Press Play, where his choreography was recognized through MJs House of Dance. His work has also been showcased at KC Castellano's Project Create, Theresa Stone's ABTrain Convention, and University of Connecticut Dance Company performances. Most recently, he performed at the Choreographers Carnival under the direction of Ali Koinoglou. With five years of teaching experience working with dancers ages 10 to 22, Trevor is committed to cultivating expressive and fulfilled artists who carry confidence beyond the studio.",
+      specialties: ["Contemporary", "Hip Hop", "Breaking", "Jazz", "Street Jazz"],
     },
     {
-      name: "Maya Thompson",
-      role: "Senior Instructor - Contemporary & Jazz",
-      image: "https://images.unsplash.com/photo-1768853972795-2739a9685567?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjB3b21hbiUyMHBvcnRyYWl0JTIwc3R1ZGlvfGVufDF8fHx8MTc3MzM0Mjg0MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      bio: "A former professional dancer with renowned companies across Europe and North America, Maya brings a wealth of technical expertise and artistic insight. Her classes emphasize fluidity, musicality, and the connection between mind and body.",
-      specialties: ["Contemporary", "Jazz", "Lyrical"],
-    },
-    {
-      name: "Darius Chen",
-      role: "Hip-Hop & Urban Styles Instructor",
-      image: "https://images.unsplash.com/photo-1761882619891-6529ff92df0a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWxlJTIwZGFuY2VyJTIwcG9ydHJhaXQlMjBwZXJmb3JtYW5jZXxlbnwxfHx8fDE3NzMzNDI4Mzh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      bio: "Darius is a battle-tested dancer who's competed and judged at international hip-hop events. His high-energy classes focus on groove, rhythm, and street dance foundations while encouraging students to develop their unique style and confidence.",
-      specialties: ["Hip-Hop", "Breaking", "Popping"],
-    },
-    {
-      name: "Sophia Williams",
-      role: "Youth Program Director & Instructor",
-      image: "https://images.unsplash.com/photo-1664673531303-c933ac4cee70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaXRuZXNzJTIwaW5zdHJ1Y3RvciUyMHdvbWFuJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzczMzQyODQxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      bio: "Specializing in dance education for young dancers, Sophia creates nurturing environments where kids and teens can explore movement, build confidence, and discover their passion for dance. Her patient teaching style makes complex techniques accessible to all skill levels.",
-      specialties: ["Ballet", "Jazz", "Youth Development"],
+      name: "Aydin Eichenholz",
+      role: "Co-Founder",
+      headshot: aydinAction,
+      actionShot: aydinAction,
+      bio: "Aydin Eichenholz is a co-founder of Take 2 Dance Studio, bringing passion, creativity, and dedication to building a space where dancers can thrive. More details coming soon.",
+      specialties: ["Breaking", "Hip Hop", "Urban Styles"],
     },
   ];
 
@@ -107,7 +97,7 @@ export function Staff() {
                   >
                     <div className="aspect-[3/4] relative">
                       <ImageWithFallback
-                        src={member.image}
+                        src={member.actionShot}
                         alt={member.name}
                         className="w-full h-full object-cover"
                       />
