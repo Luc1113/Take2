@@ -179,3 +179,24 @@
     line-height: 1.5;
   }
 }
+
+@layer utilities {
+  @supports (-moz-appearance: none) {
+    .ff-disable-backdrop {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    .ff-opaque-nav {
+      background-color: rgba(0, 0, 0, 0.95) !important;
+    }
+
+    .ff-opaque-chip {
+      background-color: rgba(255, 255, 255, 0.14) !important;
+    }
+
+    .ff-contain-layout {
+      contain: layout paint style;
+    }
+  }
+}
