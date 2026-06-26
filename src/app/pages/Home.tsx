@@ -11,7 +11,7 @@ export function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[calc(100vh-5rem)] flex items-center justify-center overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-red-950/30" />
@@ -48,8 +48,9 @@ export function Home() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col items-center gap-8"
           >
-            <h1 className="font-['Bebas_Neue'] text-8xl md:text-9xl tracking-wider mb-4">
+            <h1 className="font-['Bebas_Neue'] text-8xl md:text-9xl leading-none tracking-wider">
               <span className="text-white">TAKE</span>
               <span className="text-red-600"> 2</span>
             </h1>
@@ -57,9 +58,9 @@ export function Home() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ delay: 0.8, duration: 0.6 }}
-              className="h-1 w-64 bg-red-600 mx-auto mb-8"
+              className="h-1 w-64 bg-red-600 mx-auto"
             />
-            <p className="font-['Oswald'] text-2xl text-white/90 tracking-widest uppercase">
+            <p className="font-['Oswald'] text-2xl leading-none text-white/90 tracking-widest uppercase">
               The Company
             </p>
           </motion.div>
@@ -68,7 +69,7 @@ export function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.8 }}
-            className="mt-8 text-xl text-white/70 max-w-2xl mx-auto"
+            className="mt-8 text-xl leading-relaxed text-white/70 max-w-2xl mx-auto"
           >
             Where passion meets precision. Elevate your dance journey with
             world-class instruction.
@@ -94,7 +95,7 @@ export function Home() {
             opacity: { delay: 2, duration: 0.6 },
             y: { delay: 2.5, duration: 1.5, repeat: Infinity },
           }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
         >
           <div className="w-6 h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-2">
             <div className="w-1 h-3 bg-red-600 rounded-full" />
@@ -117,7 +118,7 @@ export function Home() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="font-['Bebas_Neue'] text-7xl tracking-wider mb-6">
+            <h2 className="font-['Bebas_Neue'] text-7xl leading-none tracking-wider mb-6">
               <span className="text-white">About</span>{" "}
               <span className="text-red-600">Us</span>
             </h2>
@@ -170,7 +171,7 @@ export function Home() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="font-['Bebas_Neue'] text-7xl tracking-wider mb-6">
+            <h2 className="font-['Bebas_Neue'] text-7xl leading-none tracking-wider mb-6">
               <span className="text-white">See Us</span>{" "}
               <span className="text-red-600">In Action</span>
             </h2>
@@ -237,7 +238,7 @@ export function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="font-['Bebas_Neue'] text-6xl md:text-7xl tracking-wider mb-8 text-white">
+            <h2 className="font-['Bebas_Neue'] text-6xl md:text-7xl leading-none tracking-wider mb-8 text-white">
               Ready to Move?
             </h2>
             <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
