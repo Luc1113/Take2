@@ -82,7 +82,7 @@ export function Home() {
             className="mt-12"
           >
             <button className="bg-red-600 text-white px-12 py-4 font-['Oswald'] text-lg tracking-wider uppercase hover:bg-red-700 transition-all duration-300 hover:scale-105 active:scale-95">
-              Start Your Journey
+              Build Your Journey
             </button>
           </motion.div>
         </div>
@@ -239,7 +239,7 @@ export function Home() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="font-['Bebas_Neue'] text-6xl md:text-7xl leading-none tracking-wider mb-8 text-white">
-              Ready to Move?
+              Contact Us
             </h2>
             <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
               Join our community of passionate dancers and experience the Take 2
