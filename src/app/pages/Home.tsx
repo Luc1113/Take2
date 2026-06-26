@@ -238,7 +238,7 @@ Break the mold. Elevate your dance journey with technique and artistr
             transition={{ duration: 0.6 }}
           >
             <h2 className="font-['Bebas_Neue'] text-6xl md:text-7xl leading-none tracking-wider mb-8 text-white">
-              Contact Us
+              Contact <span className="text-red-600">Us</span>
             </h2>
             <motion.button
               whileHover={{ scale: 1.05 }}
