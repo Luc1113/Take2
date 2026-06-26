@@ -26,7 +26,7 @@ export function Home() {
               backgroundPosition: "center",
             }}
           />
-          
+
           {/* Animated Red Bars */}
           <motion.div
             initial={{ scaleX: 0 }}
@@ -60,7 +60,7 @@ export function Home() {
               className="h-1 w-64 bg-red-600 mx-auto mb-8"
             />
             <p className="font-['Oswald'] text-2xl text-white/90 tracking-widest uppercase">
-              Dance Studio
+              The Company
             </p>
           </motion.div>
 
@@ -70,7 +70,8 @@ export function Home() {
             transition={{ delay: 1.2, duration: 0.8 }}
             className="mt-8 text-xl text-white/70 max-w-2xl mx-auto"
           >
-            Where passion meets precision. Elevate your dance journey with world-class instruction.
+            Where passion meets precision. Elevate your dance journey with
+            world-class instruction.
           </motion.p>
 
           <motion.div
@@ -131,17 +132,20 @@ export function Home() {
             className="bg-white/5 backdrop-blur-sm border border-white/10 p-12"
           >
             <p className="text-white/90 text-lg leading-relaxed mb-6">
-              At Take 2 Dance Studio, we believe that dance is more than movement—it's a language of expression, 
-              a celebration of culture, and a path to personal growth. Founded with a passion for excellence, 
-              our studio has become a home for dancers of all levels to explore, create, and push their boundaries.
+              At Take 2 Dance Studio, we believe that dance is more than
+              movement—it's a language of expression, a celebration of culture,
+              and a path to personal growth. Founded with a passion for
+              excellence, our studio has become a home for dancers of all levels
+              to explore, create, and push their boundaries.
             </p>
             <p className="text-white/90 text-lg leading-relaxed">
-              Our mission is to provide world-class dance education in a supportive, inclusive environment. 
-              With expert instructors, cutting-edge facilities, and a commitment to artistic innovation, 
-              we empower every student to discover their unique voice through the art of dance.
+              Our mission is to provide world-class dance education in a
+              supportive, inclusive environment. With expert instructors,
+              cutting-edge facilities, and a commitment to artistic innovation,
+              we empower every student to discover their unique voice through
+              the art of dance.
             </p>
           </motion.div>
-
         </div>
       </section>
 
@@ -226,7 +230,8 @@ export function Home() {
               Ready to Move?
             </h2>
             <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
-              Join our community of passionate dancers and experience the Take 2 difference.
+              Join our community of passionate dancers and experience the Take 2
+              difference.
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}
