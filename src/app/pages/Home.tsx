@@ -132,18 +132,29 @@ export function Home() {
             className="bg-white/5 backdrop-blur-sm border border-white/10 p-12"
           >
             <p className="text-white/90 text-lg leading-relaxed mb-6">
-              At Take 2 Dance Studio, we believe that dance is more than
-              movement—it's a language of expression, a celebration of culture,
-              and a path to personal growth. Founded with a passion for
-              excellence, our studio has become a home for dancers of all levels
-              to explore, create, and push their boundaries.
+              Take 2 The Company is a New York based training program of
+              dedicated educators and professional dancers committed to
+              developing versatile dancers through an in-house intensive based
+              format. We are committed to developing well rounded performers and
+              artists through high level training that challenges both technical
+              precision and creative expression. At Take 2, we believe in
+              pushing dancers beyond their comfort zones while fostering
+              confidence and individuality to ultimately create an environment
+              where talent is refined into excellence. Through mentorship and a
+              passion for innovation, Take 2 The Company equips dancers with the
+              skills, resilience, and artistic voice needed to thrive in and out
+              of class.
             </p>
             <p className="text-white/90 text-lg leading-relaxed">
-              Our mission is to provide world-class dance education in a
-              supportive, inclusive environment. With expert instructors,
-              cutting-edge facilities, and a commitment to artistic innovation,
-              we empower every student to discover their unique voice through
-              the art of dance.
+              Beyond our intensives, we also want to produce compelling visuals,
+              participate in performance opportunities, and expand the reach of
+              our choreography beyond the studio walls. Through concept videos,
+              live showcases, collaborative projects, and stage work, we
+              encourage dancers to translate their training into meaningful
+              artistic experiences. Our mission is not only to educate within
+              the classroom, but also to share our movement and creative voice
+              with audiences in every space, bridging the gap between training
+              and performances.
             </p>
           </motion.div>
         </div>
