@@ -71,8 +71,7 @@ export function Home() {
             transition={{ delay: 1.2, duration: 0.8 }}
             className="mt-8 text-xl leading-relaxed text-white/70 max-w-2xl mx-auto"
           >
-            Where passion meets precision. Elevate your dance journey with
-            world-class instruction.
+Break the mold. Elevate your dance journey with technique and artistr
           </motion.p>
 
           <motion.div
