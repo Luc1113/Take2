@@ -240,10 +240,6 @@ Break the mold. Elevate your dance journey with technique and artistr
             <h2 className="font-['Bebas_Neue'] text-6xl md:text-7xl leading-none tracking-wider mb-8 text-white">
               Contact Us
             </h2>
-            <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
-              Join our community of passionate dancers and experience the Take 2
-              difference.
-            </p>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
