@@ -397,60 +397,76 @@ export function IntensivePackages() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <section className="relative overflow-hidden border-b border-white/10 px-6 pb-16 pt-20 md:pb-20 md:pt-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_20%,rgba(220,38,38,0.22),transparent_30%),linear-gradient(135deg,#090909_0%,#000_55%,#180303_100%)]" />
-        <div className="absolute -right-20 top-10 h-80 w-80 rounded-full border border-red-600/20" />
-        <div className="absolute -right-8 top-24 h-56 w-56 rounded-full border border-red-600/20" />
-        <div className="relative mx-auto max-w-7xl">
+      <section className="relative overflow-hidden border-b border-white/10 px-5 py-12 sm:px-6 md:py-16">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_20%,rgba(220,38,38,0.16),transparent_27%),linear-gradient(135deg,#090909_0%,#000_58%,#130303_100%)]" />
+        <div className="absolute -right-24 -top-28 h-96 w-96 rounded-full border border-red-600/10" />
+        <div className="absolute -right-8 -top-12 h-64 w-64 rounded-full border border-red-600/10" />
+        <div className="relative mx-auto max-w-[1400px]">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="max-w-4xl"
+            className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)] lg:items-end lg:gap-16"
           >
-            <div className="mb-5 flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.24em] text-red-500">
-              <Sparkles className="h-4 w-4" />
-              Built around your goals
+            <div>
+              <div className="mb-4 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.24em] text-red-500">
+                <Sparkles className="h-3.5 w-3.5" />
+                Built around your goals
+              </div>
+              <h1 className="font-['Bebas_Neue'] text-6xl leading-[0.9] tracking-wide sm:text-7xl md:text-8xl">
+                Build Your <span className="text-red-600">Intensive</span>
+              </h1>
             </div>
-            <h1 className="font-['Bebas_Neue'] text-7xl leading-[0.86] tracking-wide sm:text-8xl md:text-9xl">
-              Build Your <span className="text-red-600">Intensive</span>
-            </h1>
-            <p className="mt-7 max-w-2xl text-lg leading-relaxed text-white/65 md:text-xl">
-              Explore the Take Two curriculum, find classes for your level, and shape a focused week of training that is entirely your own.
-            </p>
-            <div className="mt-9 flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/60">
-              <span className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-red-500" /> {CURRICULUM.length} curriculum modules</span>
-              <span className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-red-500" /> Five-day planner</span>
-              <span className="flex items-center gap-2"><HeartHandshake className="h-4 w-4 text-red-500" /> Personal consultation</span>
+            <div className="border-l border-white/10 pl-6 lg:pb-1 lg:pl-8">
+              <p className="max-w-xl text-base leading-7 text-white/60">
+                Explore the Take Two curriculum, find classes for your level, and shape a focused week of training that is entirely your own.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-xs text-white/50">
+                <span className="flex items-center gap-2"><BookOpen className="h-3.5 w-3.5 text-red-500" /> {CURRICULUM.length} modules</span>
+                <span className="flex items-center gap-2"><CalendarDays className="h-3.5 w-3.5 text-red-500" /> Five-day planner</span>
+                <span className="flex items-center gap-2"><HeartHandshake className="h-3.5 w-3.5 text-red-500" /> Consultation ready</span>
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
 
-      <section className="px-4 py-10 sm:px-6 md:py-16">
-        <div className="mx-auto max-w-[1500px]">
-          <div className="mb-10 grid gap-5 border border-white/10 bg-white/[0.035] p-5 lg:grid-cols-[1fr_auto] lg:items-end lg:p-6">
+      <section className="px-4 py-8 sm:px-6 md:py-10">
+        <div className="mx-auto max-w-[1400px]">
+          <div className="mb-8 grid gap-5 border border-white/10 bg-[#080808] p-4 shadow-[0_16px_60px_rgba(0,0,0,0.28)] md:grid-cols-[minmax(260px,1fr)_200px] md:p-5 xl:grid-cols-[minmax(300px,1fr)_190px_auto] xl:items-end">
             <div className="min-w-0">
-              <label htmlFor="curriculum-search" className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-white/45">
-                Find a class
+              <label htmlFor="curriculum-search" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.22em] text-white/40">
+                Search curriculum
               </label>
-              <div className="relative max-w-xl">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/35" />
+              <div className="relative">
+                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
                 <input
                   id="curriculum-search"
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search by class, style, or skill..."
-                  className="h-12 w-full border border-white/15 bg-black pl-12 pr-4 text-sm text-white outline-none transition focus:border-red-600"
+                  className="h-11 w-full border border-white/12 bg-black pl-10 pr-4 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-red-600"
                 />
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <label className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-white/40">
+              Training focus
+              <select
+                value={category}
+                onChange={(event) => setCategory(event.target.value)}
+                className="mt-2 h-11 w-full border border-white/12 bg-black px-3 text-sm normal-case tracking-normal text-white outline-none focus:border-red-600"
+              >
+                {categories.map((item) => <option key={item}>{item}</option>)}
+              </select>
+            </label>
+            <div>
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/40">Level</p>
+              <div className="flex flex-wrap gap-1.5">
               {LEVELS.map((item) => (
                 <button
                   key={item}
                   onClick={() => setLevel(item)}
-                  className={`h-10 border px-4 text-xs font-semibold uppercase tracking-wider transition ${
+                  className={`h-11 border px-3 text-[11px] font-semibold uppercase tracking-wider transition ${
                     level === item
                       ? "border-red-600 bg-red-600 text-white"
                       : "border-white/15 bg-black text-white/60 hover:border-white/35 hover:text-white"
@@ -459,34 +475,24 @@ export function IntensivePackages() {
                   {item}
                 </button>
               ))}
+              </div>
             </div>
           </div>
 
-          <div className="grid gap-10 xl:grid-cols-[minmax(0,1.05fr)_minmax(560px,0.95fr)] xl:items-start">
+          <div className="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(560px,1.05fr)] xl:items-start">
             <div>
-              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="mb-4 flex items-end justify-between border-b border-white/10 pb-4">
                 <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-red-500">Step 1</p>
-                  <h2 className="font-['Bebas_Neue'] text-5xl tracking-wide">Explore Classes</h2>
+                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-red-500">01 / Select</p>
+                  <h2 className="font-['Bebas_Neue'] text-4xl leading-none tracking-wide">Explore Classes</h2>
                 </div>
-                <label className="flex items-center gap-2 text-sm text-white/55">
-                  <span className="sr-only">Filter by training category</span>
-                  <select
-                    value={category}
-                    onChange={(event) => setCategory(event.target.value)}
-                    className="h-10 border border-white/15 bg-[#0b0b0b] px-3 text-sm text-white outline-none focus:border-red-600"
-                  >
-                    {categories.map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </label>
+                <div className="text-right">
+                  <span className="font-['Oswald'] text-lg text-white/80">{String(filteredClasses.length).padStart(2, "0")}</span>
+                  <span className="ml-2 text-[10px] uppercase tracking-wider text-white/30">matches</span>
+                </div>
               </div>
 
-              <div className="mb-4 flex items-center justify-between text-xs uppercase tracking-wider text-white/40">
-                <span>{filteredClasses.length} classes</span>
-                <span>Tap a card to preview</span>
-              </div>
-
-              <div className="space-y-3">
+              <div className="space-y-2 xl:max-h-[650px] xl:overflow-y-auto xl:pr-2 [scrollbar-color:rgba(255,255,255,0.18)_transparent] [scrollbar-width:thin]">
                 <AnimatePresence initial={false}>
                   {filteredClasses.map((course) => {
                     const isExpanded = expandedId === course.id;
@@ -500,26 +506,26 @@ export function IntensivePackages() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
                         className={`border bg-[#090909] transition ${
-                          isExpanded || isScheduling ? "border-red-600/60" : "border-white/10 hover:border-white/25"
+                          isExpanded || isScheduling ? "border-red-600/50 bg-[#0c0909]" : "border-white/10 hover:border-white/25 hover:bg-white/[0.025]"
                         }`}
                       >
                         <button
                           onClick={() => setExpandedId(isExpanded ? null : course.id)}
-                          className="w-full p-5 text-left"
+                          className="w-full p-4 text-left"
                           aria-expanded={isExpanded}
                         >
-                          <div className="flex items-start gap-4">
-                            <span className={`mt-1 h-10 w-1 shrink-0 ${CATEGORY_COLORS[course.category]}`} />
+                          <div className="flex items-start gap-3.5">
+                            <span className={`mt-0.5 h-9 w-0.5 shrink-0 ${CATEGORY_COLORS[course.category]}`} />
                             <div className="min-w-0 flex-1">
-                              <div className="mb-2 flex flex-wrap items-center gap-2">
-                                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">{course.category}</span>
+                              <div className="mb-1.5 flex flex-wrap items-center gap-2">
+                                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">{course.category}</span>
                                 <span className="text-white/20">/</span>
-                                <span className="flex items-center gap-1 text-[11px] text-white/45"><Clock3 className="h-3 w-3" /> {course.duration} min</span>
+                                <span className="flex items-center gap-1 text-[10px] text-white/40"><Clock3 className="h-3 w-3" /> {course.duration} min</span>
                               </div>
-                              <h3 className="font-['Oswald'] text-xl tracking-wide text-white">{course.name}</h3>
-                              <div className="mt-3 flex flex-wrap gap-1.5">
+                              <h3 className="font-['Oswald'] text-lg tracking-wide text-white">{course.name}</h3>
+                              <div className="mt-2.5 flex flex-wrap gap-1.5">
                                 {course.levels.map((item) => (
-                                  <span key={item} className={`border px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${
+                                  <span key={item} className={`border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${
                                     item === "Open" ? "border-red-600/60 bg-red-600/10 text-red-400" : "border-white/10 text-white/45"
                                   }`}>
                                     {item}
@@ -527,7 +533,7 @@ export function IntensivePackages() {
                                 ))}
                               </div>
                             </div>
-                            <ChevronDown className={`mt-2 h-5 w-5 shrink-0 text-white/35 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                            <ChevronDown className={`mt-1.5 h-4 w-4 shrink-0 text-white/30 transition-transform ${isExpanded ? "rotate-180 text-red-500" : ""}`} />
                           </div>
                         </button>
 
@@ -539,15 +545,15 @@ export function IntensivePackages() {
                               exit={{ height: 0, opacity: 0 }}
                               className="overflow-hidden"
                             >
-                              <div className="border-t border-white/10 px-5 py-5 pl-10">
-                                <p className="text-sm leading-6 text-white/65">{course.description}</p>
+                              <div className="border-t border-white/10 px-4 py-4 pl-8">
+                                <p className="max-w-2xl text-sm leading-6 text-white/60">{course.description}</p>
                                 <button
                                   onClick={() => {
                                     if (isScheduled) return;
                                     setSchedulingId(isScheduling ? null : course.id);
                                   }}
                                   disabled={isScheduled}
-                                  className={`mt-5 inline-flex h-10 items-center gap-2 px-4 text-xs font-semibold uppercase tracking-wider transition ${
+                                  className={`mt-4 inline-flex h-9 items-center gap-2 px-3.5 text-[11px] font-semibold uppercase tracking-wider transition ${
                                     isScheduled
                                       ? "cursor-default bg-emerald-500/10 text-emerald-400"
                                       : "bg-red-600 text-white hover:bg-red-700"
@@ -569,7 +575,7 @@ export function IntensivePackages() {
                               exit={{ height: 0, opacity: 0 }}
                               className="overflow-hidden"
                             >
-                              <div className="grid gap-3 border-t border-red-600/25 bg-red-950/15 p-5 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+                              <div className="grid gap-3 border-t border-red-600/20 bg-red-950/10 p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
                                 <label className="text-xs font-semibold uppercase tracking-wider text-white/45">
                                   Day
                                   <select value={selectedDay} onChange={(event) => setSelectedDay(event.target.value as Day)} className="mt-2 h-11 w-full border border-white/15 bg-black px-3 text-sm normal-case tracking-normal text-white outline-none focus:border-red-600">
@@ -605,11 +611,11 @@ export function IntensivePackages() {
               </div>
             </div>
 
-            <aside className="min-w-0 xl:sticky xl:top-28">
-              <div className="mb-6 flex items-end justify-between">
+            <aside className="min-w-0 xl:sticky xl:top-24">
+              <div className="mb-4 flex items-end justify-between border-b border-white/10 pb-4">
                 <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-red-500">Step 2</p>
-                  <h2 className="font-['Bebas_Neue'] text-5xl tracking-wide">Your Week</h2>
+                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-red-500">02 / Arrange</p>
+                  <h2 className="font-['Bebas_Neue'] text-4xl leading-none tracking-wide">Your Week</h2>
                 </div>
                 {schedule.length > 0 && (
                   <button onClick={() => setSchedule([])} className="flex items-center gap-2 pb-1 text-xs uppercase tracking-wider text-white/40 transition hover:text-red-400">
@@ -618,19 +624,19 @@ export function IntensivePackages() {
                 )}
               </div>
 
-              <div className="overflow-x-auto border border-white/10 bg-[#070707]">
-                <div className="grid min-w-[680px] grid-cols-5 divide-x divide-white/10">
+              <div className="overflow-x-auto border border-white/10 bg-[#070707] shadow-[0_16px_60px_rgba(0,0,0,0.24)]">
+                <div className="grid min-w-[590px] grid-cols-5 divide-x divide-white/10">
                   {DAYS.map((day) => {
                     const dayClasses = schedule
                       .filter((item) => item.day === day)
                       .sort((a, b) => timeValue(a.time) - timeValue(b.time));
                     return (
-                      <div key={day} className="min-h-[420px]">
-                        <div className="border-b border-white/10 bg-white/[0.04] px-3 py-4 text-center">
+                      <div key={day} className="min-h-[360px]">
+                        <div className="border-b border-white/10 bg-white/[0.035] px-3 py-3 text-center">
                           <p className="font-['Oswald'] text-sm uppercase tracking-wider text-white/80">{day.slice(0, 3)}</p>
                           <p className="mt-1 text-[10px] uppercase tracking-wider text-white/30">{dayClasses.length} {dayClasses.length === 1 ? "class" : "classes"}</p>
                         </div>
-                        <div className="space-y-2 p-2.5">
+                        <div className="space-y-2 p-2">
                           {dayClasses.map((item) => {
                             const course = CURRICULUM.find((entry) => entry.id === item.classId);
                             if (!course) return null;
@@ -640,9 +646,9 @@ export function IntensivePackages() {
                                 initial={{ opacity: 0, scale: 0.96 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 key={item.classId}
-                                className="group relative border border-white/10 bg-white/[0.055] p-3 transition hover:border-red-600/40"
+                                className="group relative border border-white/10 bg-white/[0.045] p-2.5 transition hover:border-red-600/40"
                               >
-                                <span className={`mb-2 block h-0.5 w-7 ${CATEGORY_COLORS[course.category]}`} />
+                                <span className={`mb-2 block h-0.5 w-6 ${CATEGORY_COLORS[course.category]}`} />
                                 <p className="text-[10px] font-semibold uppercase tracking-wider text-red-400">{item.time}</p>
                                 <p className="mt-1 font-['Oswald'] text-sm leading-snug text-white">{course.name}</p>
                                 <p className="mt-2 text-[9px] uppercase tracking-wider text-white/35">{course.category} · {course.duration}m</p>
@@ -653,7 +659,7 @@ export function IntensivePackages() {
                             );
                           })}
                           {!dayClasses.length && (
-                            <div className="flex h-32 items-center justify-center border border-dashed border-white/10 text-center text-[10px] uppercase leading-5 tracking-wider text-white/20">
+                            <div className="flex h-24 items-center justify-center border border-dashed border-white/[0.08] text-center text-[9px] uppercase leading-4 tracking-wider text-white/18">
                               Open<br />for training
                             </div>
                           )}
@@ -664,21 +670,21 @@ export function IntensivePackages() {
                 </div>
               </div>
 
-              <div className="border-x border-b border-white/10 bg-white/[0.035] p-5">
-                <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-5">
+              <div className="border-x border-b border-white/10 bg-[#0a0a0a] p-4">
+                <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-4">
                   <div>
                     <p className="text-xs uppercase tracking-wider text-white/35">Your intensive</p>
-                    <p className="mt-1 font-['Oswald'] text-xl text-white">{schedule.length} {schedule.length === 1 ? "class" : "classes"}</p>
+                    <p className="mt-1 font-['Oswald'] text-lg text-white">{schedule.length} {schedule.length === 1 ? "class" : "classes"}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs uppercase tracking-wider text-white/35">Training time</p>
-                    <p className="mt-1 font-['Oswald'] text-xl text-red-500">{Math.floor(totalMinutes / 60)}h {totalMinutes % 60}m</p>
+                    <p className="mt-1 font-['Oswald'] text-lg text-red-500">{Math.floor(totalMinutes / 60)}h {totalMinutes % 60}m</p>
                   </div>
                 </div>
                 <button
                   onClick={sharePlan}
                   disabled={!schedule.length}
-                  className="flex h-14 w-full items-center justify-center gap-3 bg-red-600 px-6 font-['Oswald'] text-sm uppercase tracking-[0.16em] text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/30"
+                  className="flex h-12 w-full items-center justify-center gap-3 bg-red-600 px-6 font-['Oswald'] text-sm uppercase tracking-[0.16em] text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-white/[0.07] disabled:text-white/25"
                 >
                   <HeartHandshake className="h-5 w-5" />
                   Send for consultation
