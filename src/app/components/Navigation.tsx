@@ -8,8 +8,8 @@ export function Navigation() {
   const links = [
     { path: "/", label: "Home" },
     { path: "/staff", label: "Staff" },
-    { path: "/media", label: "Media" },
-    { path: "/intensive-packages", label: "Intensive Packages" },
+    // { path: "/media", label: "Media" }, // hidden for now
+    { path: "/intensive-packages", label: "Build Your Experience" },
   ];
 
   return (

@@ -1,13 +1,7 @@
 import { motion } from "motion/react";
+import { Link } from "react-router";
 
 export function Home() {
-  const videos = [
-    {
-      title: "Say My Name - Choreography Visual",
-      videoSrc: "/assets/Say My Name Visual.mov",
-    },
-  ];
-
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -58,7 +52,7 @@ export function Home() {
             transition={{ delay: 1.2, duration: 0.8 }}
             className="mt-7 max-w-xl text-lg leading-7 text-white/65"
           >
-Break the mold. Elevate your dance journey with technique and artistr
+Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forward.
           </motion.p>
 
           <motion.div
@@ -67,9 +61,12 @@ Break the mold. Elevate your dance journey with technique and artistr
             transition={{ delay: 1.5, duration: 0.6 }}
             className="mt-8"
           >
-            <button className="h-12 border border-red-600 bg-red-600 px-8 font-['Oswald'] text-sm uppercase tracking-[0.16em] text-white transition-colors duration-300 hover:bg-red-700">
-              Build Your Journey
-            </button>
+            <Link
+              to="/intensive-packages"
+              className="inline-block h-12 border border-red-600 bg-red-600 px-8 pt-3 font-['Oswald'] text-sm uppercase tracking-[0.16em] text-white transition-colors duration-300 hover:bg-red-700"
+            >
+              Build Your Experience
+            </Link>
           </motion.div>
         </div>
 
@@ -103,84 +100,61 @@ Break the mold. Elevate your dance journey with technique and artistr
             transition={{ delay: 0.2, duration: 0.6 }}
             className="lg:pl-12"
           >
-            <p className="mb-7 max-w-4xl text-base leading-8 text-white/75 md:text-lg">
-              Take 2 The Company is a New York based training program of
-              dedicated educators and professional dancers committed to
-              developing versatile dancers through an in-house intensive based
-              format. We are committed to developing well rounded performers and
-              artists through high level training that challenges both technical
-              precision and creative expression. At Take 2, we believe in
-              pushing dancers beyond their comfort zones while fostering
-              confidence and individuality to ultimately create an environment
-              where talent is refined into excellence. Through mentorship and a
-              passion for innovation, Take 2 The Company equips dancers with the
-              skills, resilience, and artistic voice needed to thrive in and out
-              of class.
-            </p>
-            <p className="max-w-4xl border-t border-white/10 pt-7 text-base leading-8 text-white/60 md:text-lg">
-              Beyond our intensives, we also want to produce compelling visuals,
-              participate in performance opportunities, and expand the reach of
-              our choreography beyond the studio walls. Through concept videos,
-              live showcases, collaborative projects, and stage work, we
-              encourage dancers to translate their training into meaningful
-              artistic experiences. Our mission is not only to educate within
-              the classroom, but also to share our movement and creative voice
-              with audiences in every space, bridging the gap between training
-              and performances.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+            <div className="mb-8">
+              <h3 className="mb-3 font-['Oswald'] text-xl uppercase tracking-[0.1em] text-white">
+                Who We Are
+              </h3>
+              <p className="max-w-4xl text-base leading-8 text-white/75 md:text-lg">
+                A New York based dance training program built by professional
+                dancers and choreographers who believe training should extend
+                beyond the studio. Through our in-house intensive format, we
+                bring high level training and artistry directly to your
+                dancers. Rather than following a one size fits all curriculum,
+                our intensives are designed to be customizable to the needs of
+                each studio and dancer.
+              </p>
+            </div>
 
-      {/* Promotional Material Section */}
-      <section className="border-y border-white/10 bg-[#070707] px-5 py-16 sm:px-6 md:py-20">
-        <div className="mx-auto grid max-w-[1400px] gap-8 lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start lg:gap-16">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:sticky lg:top-28"
-          >
-            <h2 className="font-['Bebas_Neue'] text-6xl leading-[0.9] tracking-wider md:text-7xl">
-              <span className="text-white">See Us</span>{" "}
-              <span className="text-red-600">In Action</span>
-            </h2>
-            <div className="mt-5 h-0.5 w-16 bg-red-600" />
-          </motion.div>
+            <div className="mb-8 border-t border-white/10 pt-8">
+              <h3 className="mb-3 font-['Oswald'] text-xl uppercase tracking-[0.1em] text-white">
+                Why We&apos;re Different
+              </h3>
+              <p className="max-w-4xl text-base leading-8 text-white/75 md:text-lg">
+                Dance training is more than the physical act of learning
+                movement. The way a dancer thinks, processes challenges,
+                handles pressure, and responds to failure directly impacts how
+                they perform and grow. Take 2 places mental health and the
+                psychology of dance at the center of our training philosophy.
+                We challenge dancers to step outside of their comfort zones and
+                give them the tools to navigate that discomfort in a healthy
+                manner. Led by active industry professionals, Take 2 combines
+                real world experience with intentional education to equip the
+                next generation. Our goal isn&apos;t to simply create better
+                dancers. It&apos;s to help develop resilient and adaptable
+                artists who can carry what they learn into every area of their
+                lives.
+              </p>
+            </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="min-w-0"
-          >
-            {videos.map((video) => (
-              <div
-                key={video.title}
-                className="group relative overflow-hidden border border-white/10 bg-black shadow-[0_24px_80px_rgba(0,0,0,0.35)]"
-              >
-                <div className="aspect-video relative bg-black">
-                  <video
-                    controls
-                    className="w-full h-full object-cover"
-                    poster=""
-                  >
-                    <source src={video.videoSrc} type="video/quicktime" />
-                    <source src={video.videoSrc} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-
-                  {/* Title Overlay */}
-                  <div className="pointer-events-none absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-5 pt-16">
-                    <h3 className="font-['Oswald'] text-lg tracking-wide text-white md:text-xl">
-                      {video.title}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <div className="border-t border-white/10 pt-8">
+              <h3 className="mb-3 font-['Oswald'] text-xl uppercase tracking-[0.1em] text-white">
+                What We Offer
+              </h3>
+              <p className="mb-4 max-w-4xl text-base leading-8 text-white/75 md:text-lg">
+                We bring the intensive to you.
+              </p>
+              <p className="max-w-4xl text-base leading-8 text-white/75 md:text-lg">
+                Take 2 travels directly to your studio or chosen location with
+                a team of professionally vetted dancers, choreographers, and
+                educators who are actively training and working within the
+                dance industry. We provide the infrastructure needed to create
+                an immersive training experience, including professional media
+                and lighting equipment to enhance and capture every moment.
+                From a one day workshop to a fully customized multi-day
+                experience, you choose what your dancers need. You build the
+                intensive. We bring it to life.
+              </p>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -213,13 +187,23 @@ Break the mold. Elevate your dance journey with technique and artistr
             <h2 className="font-['Bebas_Neue'] text-5xl leading-none tracking-wider text-white md:text-6xl">
               Contact <span className="text-red-600">Us</span>
             </h2>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="h-12 border border-red-600 bg-red-600 px-8 font-['Oswald'] text-sm uppercase tracking-[0.16em] text-white transition-colors duration-300 hover:bg-red-700"
-            >
-              Book Your First Class
-            </motion.button>
+            <div className="flex flex-col gap-2 font-['Oswald'] text-sm uppercase tracking-[0.1em] text-white/80 sm:items-end">
+              <a
+                href="mailto:connect@take2company.com"
+                className="transition-colors duration-300 hover:text-red-500"
+              >
+                connect@take2company.com
+              </a>
+              <p>(631)-702-5234&nbsp; |&nbsp; (516)-273-2685</p>
+              <a
+                href="https://instagram.com/take2company"
+                target="_blank"
+                rel="noreferrer"
+                className="transition-colors duration-300 hover:text-red-500"
+              >
+                @take2company
+              </a>
+            </div>
           </motion.div>
         </div>
       </section>

@@ -1,40 +1,31 @@
 import { memo, type CSSProperties } from "react";
 import { motion } from "motion/react";
-import { Instagram, Mail, Youtube } from "lucide-react";
+import { Instagram } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import aydinAction from "../../assets/aydin-action.webp";
+import aydinHeadshot from "../../assets/aydin-headshot.webp";
 import trevorHeadshot from "../../assets/trevor-headshot.webp";
 
-type StaffMember = {
+type Founder = {
   name: string;
-  role: string;
-  actionShot: string;
+  headshot: string;
+  instagram: string;
   bio: string;
-  specialties: string[];
 };
 
-const STAFF_MEMBERS: StaffMember[] = [
+const FOUNDERS: Founder[] = [
   {
     name: "Trevor Mazzei",
-    role: "Co-Founder, Choreographer & Educator",
-    actionShot: trevorHeadshot,
+    headshot: trevorHeadshot,
+    instagram: "@trevor_mazzei",
     bio: "Trevor Mazzei is a choreographer and educator dedicated to developing strong dancers with confident, resilient minds. A graduate of the University of Connecticut with a degree in Psychology, he integrates mental wellness into his rehearsal spaces, fostering environments where dancers feel supported, seen, and challenged. Originally from Long Island, New York, Trevor developed a deep appreciation for movement at an early age and expanded his training through conventions and intensives such as Theresa Stone's Instincts. He also pursued independent study at Broadway Dance Center, Peridance, Steps on Broadway, and PMT House of Dance, training under renowned choreographers in Contemporary, Hip Hop, Breaking, Jazz, and Street Jazz. During his time at the University of Connecticut, he served as the D.E.I. Executive Board Member and choreographer for the UConn Dance Company, advocating for inclusive and safe spaces within the company. Trevor's choreography has earned numerous awards and adjudications at both regional and national competitions, including Press Play, where his choreography was recognized through MJs House of Dance. His work has also been showcased at KC Castellano's Project Create, Theresa Stone's ABTrain Convention, and University of Connecticut Dance Company performances. Most recently, he performed at the Choreographers Carnival under the direction of Ali Koinoglou. With five years of teaching experience working with dancers ages 10 to 22, Trevor is committed to cultivating expressive and fulfilled artists who carry confidence beyond the studio.",
-    specialties: ["Contemporary", "Hip Hop", "Breaking", "Jazz", "Street Jazz"],
   },
   {
     name: "Aydin Eichenholz",
-    role: "Co-Founder",
-    actionShot: aydinAction,
+    headshot: aydinHeadshot,
+    instagram: "@aydin_rin",
     bio: "Aydin Eichenholz is a co-founder of Take 2 Dance Studio, bringing passion, creativity, and dedication to building a space where dancers can thrive. More details coming soon.",
-    specialties: ["Breaking", "Hip Hop", "Urban Styles"],
   },
 ];
-
-const SOCIAL_LINKS = [
-  { label: "Instagram", Icon: Instagram },
-  { label: "YouTube", Icon: Youtube },
-  { label: "Email", Icon: Mail },
-] as const;
 
 const IN_VIEW: { once: true; margin: string } = { once: true, margin: "-100px" };
 
@@ -48,26 +39,21 @@ const HERO_BACKGROUND_STYLE: CSSProperties = {
   backgroundPosition: "center",
 };
 
-type StaffMemberCardProps = {
-  member: StaffMember;
+type FounderCardProps = {
+  founder: Founder;
   index: number;
 };
 
-const StaffMemberCard = memo(function StaffMemberCard({
-  member,
-  index,
-}: StaffMemberCardProps) {
-  const isReverse = index % 2 === 1;
-
+const FounderCard = memo(function FounderCard({ founder, index }: FounderCardProps) {
   return (
     <motion.article
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={IN_VIEW}
       transition={{ delay: index * 0.1, duration: 0.6 }}
-      className="grid md:grid-cols-2 gap-12 items-center [content-visibility:auto] [contain-intrinsic-size:1px_1200px] ff-contain-layout"
+      className="[content-visibility:auto] [contain-intrinsic-size:1px_1200px] ff-contain-layout"
     >
-      <div className={`relative group ${isReverse ? "md:order-2" : ""}`}>
+      <div className="relative group">
         <motion.div
           whileHover={{ scale: 1.02 }}
           transition={{ duration: 0.3 }}
@@ -76,8 +62,8 @@ const StaffMemberCard = memo(function StaffMemberCard({
         >
           <div className="aspect-[3/4] relative">
             <ImageWithFallback
-              src={member.actionShot}
-              alt={member.name}
+              src={founder.headshot}
+              alt={founder.name}
               className="w-full h-full object-cover"
               sizes="(min-width: 768px) 50vw, 100vw"
             />
@@ -91,63 +77,43 @@ const StaffMemberCard = memo(function StaffMemberCard({
               className="absolute top-0 right-0 w-2 h-full bg-red-600 origin-top transform-gpu"
               style={WILL_CHANGE_TRANSFORM}
             />
-          </div>
 
-          <div className="absolute bottom-6 left-6 flex gap-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto">
-            {SOCIAL_LINKS.map(({ label, Icon }) => (
-              <a
-                key={label}
-                href="#"
-                aria-label={label}
-                className="w-10 h-10 bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-red-600 hover:border-red-600 transition-colors duration-300 ff-disable-backdrop ff-opaque-chip"
-              >
-                <Icon className="w-5 h-5 text-white" />
-              </a>
-            ))}
+            <a
+              href={`https://instagram.com/${founder.instagram.replace("@", "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-4 right-4 flex items-center gap-2 bg-black/60 backdrop-blur-sm border border-white/20 px-3 py-2 text-white/90 text-sm font-['Oswald'] tracking-wide hover:bg-red-600 hover:border-red-600 transition-colors duration-300 ff-disable-backdrop ff-opaque-chip"
+            >
+              <Instagram className="w-4 h-4" />
+              {founder.instagram}
+            </a>
           </div>
         </motion.div>
       </div>
 
-      <div className={isReverse ? "md:order-1" : ""}>
-        <motion.div
-          initial={{ opacity: 0, x: isReverse ? 30 : -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          style={WILL_CHANGE_TRANSFORM}
-        >
-          <h2 className="font-['Bebas_Neue'] text-5xl tracking-wider text-white mb-2">
-            {member.name}
-          </h2>
-          <p className="font-['Oswald'] text-red-600 text-xl tracking-wide uppercase mb-6">
-            {member.role}
-          </p>
-          <div className="h-0.5 w-24 bg-red-600 mb-6" />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2, duration: 0.6 }}
+        style={WILL_CHANGE_TRANSFORM}
+        className="mt-6"
+      >
+        <h2 className="font-['Bebas_Neue'] text-5xl tracking-wider text-white mb-2">
+          {founder.name}
+        </h2>
+        <p className="font-['Oswald'] text-red-600 text-xl tracking-wide uppercase mb-6">
+          Founder
+        </p>
+        <div className="h-0.5 w-24 bg-red-600 mb-6" />
 
-          <p className="text-white/80 text-lg leading-relaxed mb-6">{member.bio}</p>
-
-          <div>
-            <p className="font-['Oswald'] text-white/60 text-sm uppercase tracking-wider mb-3">
-              Specialties
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {member.specialties.map((specialty) => (
-                <span
-                  key={specialty}
-                  className="px-4 py-2 bg-white/5 border border-white/10 text-white/90 text-sm font-['Oswald'] tracking-wide uppercase"
-                >
-                  {specialty}
-                </span>
-              ))}
-            </div>
-          </div>
-        </motion.div>
-      </div>
+        <p className="text-white/80 text-lg leading-relaxed">{founder.bio}</p>
+      </motion.div>
     </motion.article>
   );
 });
 
-StaffMemberCard.displayName = "StaffMemberCard";
+FounderCard.displayName = "FounderCard";
 
 export function Staff() {
   return (
@@ -185,21 +151,51 @@ export function Staff() {
               style={WILL_CHANGE_TRANSFORM}
             />
             <p className="text-xl text-white/80 max-w-3xl mx-auto">
-              Learn from industry professionals who are passionate about sharing their expertise 
+              Learn from industry professionals who are passionate about sharing their expertise
               and helping you achieve your dance goals.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Staff Grid */}
+      {/* Founders Grid */}
       <section className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="space-y-24">
-            {STAFF_MEMBERS.map((member, index) => (
-              <StaffMemberCard key={member.name} member={member} index={index} />
+          <div className="grid md:grid-cols-2 gap-12">
+            {FOUNDERS.map((founder, index) => (
+              <FounderCard key={founder.name} founder={founder} index={index} />
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Meet Our Team */}
+      <section className="py-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={IN_VIEW}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="font-['Bebas_Neue'] text-6xl md:text-7xl tracking-wider text-white mb-4">
+              Meet Our Team
+            </h2>
+            <div className="h-1 w-32 bg-red-600 mx-auto" />
+          </motion.div>
+
+          {/* Additional team members will be added here, cycling headshots and
+              bios right-to-left as they're added. */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={IN_VIEW}
+            transition={{ duration: 0.6 }}
+            className="text-center text-white/60 text-lg font-['Oswald'] tracking-wide uppercase"
+          >
+            Additional team profiles coming soon
+          </motion.p>
         </div>
       </section>
 
