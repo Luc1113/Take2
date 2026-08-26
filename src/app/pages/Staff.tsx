@@ -69,6 +69,7 @@ const TEAM: TeamMember[] = [
     name: "Sophie Savelli",
     role: "Mentor",
     headshot: sophieHeadshot,
+    instagram: "@sophie.savelli",
     bio: "Sophie Savelli is a New York City based dancer, teacher, and choreographer who specializes in contemporary, jazz, street fusion, and rhythm tap. Originally from Cleveland, Sophie trained extensively in all forms of dance at her family's dance studio, and began teaching there and at several other studios in North East Ohio before relocating to NYC to attend the Conservatory at Steps on Broadway. She's been a featured performer and dance captain at Cedar Point, has performed at the 24th and 25th annual Choreographer's Carnival, has appeared in concept videos for multiple choreographers in New York, was seen as a guest artist in Tulsa Ballet's \"Strictly Gershwin\", and recently studied choreography under Doug Varone in his workshop hosted at Juilliard. Sophie is also a member of the Dig Tap Society, a tap dance company that performs internationally.",
   },
 ];

@@ -965,7 +965,10 @@ export function IntensivePackages() {
                   <h2 className="font-['Bebas_Neue'] text-4xl leading-none tracking-wide">Your Week</h2>
                 </div>
                 {(schedule.length > 0 || breaks.length > 0) && (
-                  <button onClick={() => { setSchedule([]); setBreaks([]); }} className="flex items-center gap-2 pb-1 text-xs uppercase tracking-wider text-white/40 transition hover:text-red-400">
+                  <button
+                    onClick={() => { setSchedule([]); setBreaks([]); }}
+                    className="flex items-center gap-1.5 border border-red-600/60 bg-red-600/10 px-2.5 py-1.5 text-xs uppercase tracking-wider text-red-500 transition hover:border-red-600 hover:bg-red-600/20"
+                  >
                     <RotateCcw className="h-3.5 w-3.5" /> Clear
                   </button>
                 )}
@@ -995,7 +998,9 @@ export function IntensivePackages() {
                         <div
                           key={mark}
                           style={{ top: ((mark - DAY_START) / (DAY_END - DAY_START)) * GRID_HEIGHT }}
-                          className="absolute right-1.5 -translate-y-1/2 text-[9px] uppercase tracking-wider text-white/30"
+                          className={`absolute right-1.5 text-[9px] uppercase tracking-wider text-white/30 ${
+                            mark === DAY_START ? "translate-y-0.5" : mark === DAY_END ? "-translate-y-full" : "-translate-y-1/2"
+                          }`}
                         >
                           {formatHourLabel(mark)}
                         </div>
