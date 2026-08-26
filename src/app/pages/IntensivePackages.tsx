@@ -789,7 +789,7 @@ export function IntensivePackages() {
                 </div>
               </div>
 
-              <div className="space-y-2 xl:max-h-[650px] xl:overflow-y-auto xl:pr-2 [scrollbar-color:rgba(255,255,255,0.18)_transparent] [scrollbar-width:thin]">
+              <div className="space-y-2 xl:h-[870px] xl:overflow-y-auto xl:pr-2 [scrollbar-color:rgba(255,255,255,0.18)_transparent] [scrollbar-width:thin]">
                 <AnimatePresence initial={false}>
                   {filteredClasses.map((course) => {
                     const isExpanded = expandedId === course.id;
@@ -1062,15 +1062,15 @@ export function IntensivePackages() {
                                       levels: entry.item.levels,
                                     })
                                   }
-                                  style={{ touchAction: "none", top, height: Math.max(height, 34) }}
-                                  className={`group absolute inset-x-1 z-10 cursor-grab overflow-hidden border border-white/10 bg-[#151013] p-1.5 text-left transition hover:border-red-600/50 active:cursor-grabbing ${
+                                  style={{ touchAction: "none", top, height: Math.max(height, 46) }}
+                                  className={`group absolute inset-x-1 z-10 flex cursor-grab flex-col justify-center overflow-hidden border border-white/10 bg-[#151013] px-1.5 py-1 text-left leading-tight transition hover:border-red-600/50 active:cursor-grabbing ${
                                     draggingKey === dragKey ? "opacity-40" : ""
                                   }`}
                                 >
                                   <span className={`absolute inset-y-0 left-0 w-0.5 ${CATEGORY_COLORS[course.category]}`} />
                                   <p className="truncate pl-1.5 text-[9px] font-semibold uppercase tracking-wider text-red-400">{formatTime(entry.item.time)}</p>
                                   <p className="truncate pl-1.5 font-['Oswald'] text-xs leading-tight text-white">{course.name}</p>
-                                  {entry.item.levels && entry.item.levels.length > 0 && (
+                                  {course.duration >= 60 && entry.item.levels && entry.item.levels.length > 0 && (
                                     <p className="truncate pl-1.5 text-[8px] uppercase tracking-wider text-white/35">{entry.item.levels.join(" / ")}</p>
                                   )}
                                   <button
@@ -1094,8 +1094,8 @@ export function IntensivePackages() {
                                 onPointerDown={
                                   isEditing ? undefined : (event) => beginDrag(event, { kind: "break-move", breakId: entry.item.id, length })
                                 }
-                                style={{ touchAction: "none", top, height: Math.max(height, 30) }}
-                                className={`group absolute inset-x-1 border border-dashed border-amber-500/40 bg-amber-500/[0.08] p-1.5 text-left transition hover:border-amber-500/70 ${
+                                style={{ touchAction: "none", top, height: Math.max(height, 36) }}
+                                className={`group absolute inset-x-1 flex flex-col justify-center border border-dashed border-amber-500/40 bg-amber-500/[0.08] px-1.5 py-1 text-left leading-tight transition hover:border-amber-500/70 ${
                                   isEditing ? "z-30 overflow-visible" : "z-10 cursor-grab overflow-hidden active:cursor-grabbing"
                                 } ${draggingKey === entry.item.id ? "opacity-40" : ""}`}
                               >

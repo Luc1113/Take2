@@ -5,6 +5,7 @@ import { Staff } from "./pages/Staff";
 import { Media } from "./pages/Media";
 import { IntensivePackages } from "./pages/IntensivePackages";
 import { AdminLogin } from "./pages/AdminLogin";
+import { NotFound } from "./pages/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
       { path: "media", Component: Media },
       { path: "build-schedule", Component: IntensivePackages },
       { path: "admin", Component: AdminLogin },
+      { path: "*", Component: NotFound },
     ],
   },
 ]);
