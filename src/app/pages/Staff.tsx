@@ -323,13 +323,6 @@ export function Staff() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="font-['Bebas_Neue'] text-6xl md:text-7xl tracking-wider mb-8 text-white">
-              Growing Team
-            </h2>
-            <p className="text-xl text-white/80 mb-4">
-              Experience firsthand the passion and expertise our instructors
-              bring to every session.
-            </p>
             <p className="font-['Oswald'] text-red-600 text-lg tracking-widest uppercase">
               More Team Members Coming Soon
             </p>
