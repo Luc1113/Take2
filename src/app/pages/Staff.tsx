@@ -20,40 +20,50 @@ const FOUNDERS: Founder[] = [
     bio: "Trevor Mazzei is a choreographer and educator dedicated to developing strong dancers with confident, resilient minds. A graduate of the University of Connecticut with a degree in Psychology, he integrates mental wellness into his rehearsal spaces, fostering environments where dancers feel supported, seen, and challenged. Originally from Long Island, New York, Trevor developed a deep appreciation for movement at an early age and expanded his training through conventions and intensives such as Theresa Stone's Instincts. He also pursued independent study at Broadway Dance Center, Peridance, Steps on Broadway, and PMT House of Dance, training under renowned choreographers in Contemporary, Hip Hop, Breaking, Jazz, and Street Jazz. During his time at the University of Connecticut, he served as the D.E.I. Executive Board Member and choreographer for the UConn Dance Company, advocating for inclusive and safe spaces within the company. Trevor's choreography has earned numerous awards and adjudications at both regional and national competitions, including Press Play, where his choreography was recognized through MJs House of Dance. His work has also been showcased at KC Castellano's Project Create, Theresa Stone's ABTrain Convention, and University of Connecticut Dance Company performances. Most recently, he performed at the Choreographers Carnival under the direction of Ali Koinoglou. With five years of teaching experience working with dancers ages 10 to 22, Trevor is committed to cultivating expressive and fulfilled artists who carry confidence beyond the studio.",
   },
   {
-    name: "Aydin Eichenholz",
+    name: "Aydin Rin",
     headshot: aydinHeadshot,
     instagram: "@aydin_rin",
     bio: (
       <>
-        Aydin Rin is a professional choreographer and educator based in LI, New York, with extensive
-        industry experience. His resume showcases a variety of jobs consisting of live work such as
-        backup dancing at the <em>Macy’s Thanksgiving Day Parade</em> for Kim Petras, performing on
-        stages such as <em>TV Eyes</em> opening for Tim Capello choreographed by Neil Schwartz,
-        Choreographers Carnival for Ali Koinoglou and many more. Aydin also has experience working
-        with cameras and television, notably including working for News 12, music videos with Izzy
-        Gilden directed by Lane Napper, and Frankie Zulferino directed by Theresa Stone. Having
-        trained in many styles and graduating from professional industry programs such as Broadway
-        Dance Center's <em>Professional Semester</em>, Neil Schwartz's <em>Working Hour</em>, and
-        Theresa Stone’s <em>Instincts</em>. Throughout New York, he continues to train with renowned
-        choreographers from establishments such as Brickhouse, Steps On Broadway, Broadway Dance
-        Center and more. Aydin’s choreography has received multiple awards, nominations, and
-        adjudications at competitions both at the regional and national levels through Mj’s House of
-        Dance. Additionally, his work has also been featured by Theresa Stone’s <em>ABTrain</em> and
-        Neil Schwartz’s <em>Working hour</em>. As a teacher, he believes that you have to train the
-        passion and love for the art first, and the skills will soon follow. Aydin strives to teach
-        more than just moves, but lessons that dancers can carry and hold on to for any situation they
-        might face. By fostering resilient students that can express their individuality, unique
-        voice, and style, they will be able to leave their mark on the broader stage of the dance
-        community.
+        Aydin Rin is a professional choreographer and educator based in LI, New
+        York, with extensive industry experience. His resume showcases a variety
+        of jobs consisting of live work such as backup dancing at the{" "}
+        <em>Macy’s Thanksgiving Day Parade</em> for Kim Petras, performing on
+        stages such as <em>TV Eyes</em> opening for Tim Capello choreographed by
+        Neil Schwartz, Choreographers Carnival for Ali Koinoglou and many more.
+        Aydin also has experience working with cameras and television, notably
+        including working for News 12, music videos with Izzy Gilden directed by
+        Lane Napper, and Frankie Zulferino directed by Theresa Stone. Having
+        trained in many styles and graduating from professional industry
+        programs such as Broadway Dance Center's <em>Professional Semester</em>,
+        Neil Schwartz's <em>Working Hour</em>, and Theresa Stone’s{" "}
+        <em>Instincts</em>. Throughout New York, he continues to train with
+        renowned choreographers from establishments such as Brickhouse, Steps On
+        Broadway, Broadway Dance Center and more. Aydin’s choreography has
+        received multiple awards, nominations, and adjudications at competitions
+        both at the regional and national levels through Mj’s House of Dance.
+        Additionally, his work has also been featured by Theresa Stone’s{" "}
+        <em>ABTrain</em> and Neil Schwartz’s <em>Working hour</em>. As a
+        teacher, he believes that you have to train the passion and love for the
+        art first, and the skills will soon follow. Aydin strives to teach more
+        than just moves, but lessons that dancers can carry and hold on to for
+        any situation they might face. By fostering resilient students that can
+        express their individuality, unique voice, and style, they will be able
+        to leave their mark on the broader stage of the dance community.
       </>
     ),
   },
 ];
 
-const IN_VIEW: { once: true; margin: string } = { once: true, margin: "-100px" };
+const IN_VIEW: { once: true; margin: string } = {
+  once: true,
+  margin: "-100px",
+};
 
 const WILL_CHANGE_OPACITY: CSSProperties = { willChange: "opacity" };
-const WILL_CHANGE_TRANSFORM: CSSProperties = { willChange: "transform, opacity" };
+const WILL_CHANGE_TRANSFORM: CSSProperties = {
+  willChange: "transform, opacity",
+};
 
 const HERO_BACKGROUND_STYLE: CSSProperties = {
   backgroundImage:
@@ -67,7 +77,10 @@ type FounderCardProps = {
   index: number;
 };
 
-const FounderCard = memo(function FounderCard({ founder, index }: FounderCardProps) {
+const FounderCard = memo(function FounderCard({
+  founder,
+  index,
+}: FounderCardProps) {
   return (
     <motion.article
       initial={{ opacity: 0, y: 50 }}
@@ -174,8 +187,8 @@ export function Staff() {
               style={WILL_CHANGE_TRANSFORM}
             />
             <p className="text-xl text-white/80 max-w-3xl mx-auto">
-              Learn from industry professionals who are passionate about sharing their expertise
-              and helping you achieve your dance goals.
+              Learn from industry professionals who are passionate about sharing
+              their expertise and helping you achieve your dance goals.
             </p>
           </motion.div>
         </div>
@@ -205,7 +218,8 @@ export function Staff() {
               Join Our Classes
             </h2>
             <p className="text-xl text-white/80 mb-12">
-              Experience firsthand the passion and expertise our instructors bring to every session.
+              Experience firsthand the passion and expertise our instructors
+              bring to every session.
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}
