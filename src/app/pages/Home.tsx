@@ -1,26 +1,45 @@
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { Link } from "react-router";
+import homeMontage from "../../assets/home-montage.mp4";
+import homeMontagePoster from "../../assets/home-montage-poster.webp";
 
 export function Home() {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative flex min-h-[620px] items-center overflow-hidden border-b border-white/10 md:min-h-[650px]">
-        {/* Animated Background */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.96)_0%,rgba(0,0,0,0.82)_48%,rgba(0,0,0,0.42)_100%),linear-gradient(180deg,transparent_65%,#000_100%)]" />
+        {/* Video Background */}
+        <div className="absolute inset-0 bg-black">
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.18 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 1.5 }}
-            className="absolute inset-0"
+            className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1683974608358-6606fd6d5000?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYW5jZSUyMHN0dWRpbyUyMG1pcnJvciUyMHByYWN0aWNlfGVufDF8fHx8MTc3MzM0Mjc4MHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
-              backgroundSize: "cover",
-              backgroundPosition: "center 42%",
+              backgroundImage: `url(${homeMontagePoster})`,
             }}
           />
-
+          {!prefersReducedMotion && (
+            <motion.video
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1.5 }}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={homeMontagePoster}
+              aria-hidden="true"
+              tabIndex={-1}
+              className="absolute inset-0 hidden h-full w-full object-cover sm:block"
+            >
+              <source src={homeMontage} type="video/mp4" media="(min-width: 640px)" />
+            </motion.video>
+          )}
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.94)_0%,rgba(0,0,0,0.76)_48%,rgba(0,0,0,0.32)_100%),linear-gradient(180deg,transparent_65%,#000_100%)]" />
         </div>
 
         {/* Hero Content */}
