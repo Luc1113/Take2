@@ -1,4 +1,4 @@
-import { memo, type CSSProperties } from "react";
+import { memo, type CSSProperties, type ReactNode } from "react";
 import { motion } from "motion/react";
 import { Instagram } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
@@ -9,7 +9,7 @@ type Founder = {
   name: string;
   headshot: string;
   instagram: string;
-  bio: string;
+  bio: ReactNode;
 };
 
 const FOUNDERS: Founder[] = [
@@ -23,7 +23,30 @@ const FOUNDERS: Founder[] = [
     name: "Aydin Eichenholz",
     headshot: aydinHeadshot,
     instagram: "@aydin_rin",
-    bio: "Aydin Eichenholz is a co-founder of Take 2 Dance Studio, bringing passion, creativity, and dedication to building a space where dancers can thrive. More details coming soon.",
+    bio: (
+      <>
+        Aydin Rin is a professional choreographer and educator based in LI, New York, with extensive
+        industry experience. His resume showcases a variety of jobs consisting of live work such as
+        backup dancing at the <em>Macy’s Thanksgiving Day Parade</em> for Kim Petras, performing on
+        stages such as <em>TV Eyes</em> opening for Tim Capello choreographed by Neil Schwartz,
+        Choreographers Carnival for Ali Koinoglou and many more. Aydin also has experience working
+        with cameras and television, notably including working for News 12, music videos with Izzy
+        Gilden directed by Lane Napper, and Frankie Zulferino directed by Theresa Stone. Having
+        trained in many styles and graduating from professional industry programs such as Broadway
+        Dance Center's <em>Professional Semester</em>, Neil Schwartz's <em>Working Hour</em>, and
+        Theresa Stone’s <em>Instincts</em>. Throughout New York, he continues to train with renowned
+        choreographers from establishments such as Brickhouse, Steps On Broadway, Broadway Dance
+        Center and more. Aydin’s choreography has received multiple awards, nominations, and
+        adjudications at competitions both at the regional and national levels through Mj’s House of
+        Dance. Additionally, his work has also been featured by Theresa Stone’s <em>ABTrain</em> and
+        Neil Schwartz’s <em>Working hour</em>. As a teacher, he believes that you have to train the
+        passion and love for the art first, and the skills will soon follow. Aydin strives to teach
+        more than just moves, but lessons that dancers can carry and hold on to for any situation they
+        might face. By fostering resilient students that can express their individuality, unique
+        voice, and style, they will be able to leave their mark on the broader stage of the dance
+        community.
+      </>
+    ),
   },
 ];
 
@@ -166,36 +189,6 @@ export function Staff() {
               <FounderCard key={founder.name} founder={founder} index={index} />
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Meet Our Team */}
-      <section className="py-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={IN_VIEW}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="font-['Bebas_Neue'] text-6xl md:text-7xl tracking-wider text-white mb-4">
-              Meet Our Team
-            </h2>
-            <div className="h-1 w-32 bg-red-600 mx-auto" />
-          </motion.div>
-
-          {/* Additional team members will be added here, cycling headshots and
-              bios right-to-left as they're added. */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={IN_VIEW}
-            transition={{ duration: 0.6 }}
-            className="text-center text-white/60 text-lg font-['Oswald'] tracking-wide uppercase"
-          >
-            Additional team profiles coming soon
-          </motion.p>
         </div>
       </section>
 
