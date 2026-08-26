@@ -33,6 +33,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      # GitHub Pages has no configurable SPA rewrite. Serving the built app as
+      # its 404 page lets React Router handle direct requests such as /staff.
+      - name: Add SPA fallback
+        run: cp dist/index.html dist/404.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

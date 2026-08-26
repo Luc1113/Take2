@@ -22,22 +22,19 @@ export function Home() {
             }}
           />
           {!prefersReducedMotion && (
-            <motion.video
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1.5 }}
+            <video
               autoPlay
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="auto"
               poster={homeMontagePoster}
               aria-hidden="true"
               tabIndex={-1}
-              className="absolute inset-0 hidden h-full w-full object-cover sm:block"
+              className="absolute inset-0 h-full w-full object-cover"
             >
-              <source src={homeMontage} type="video/mp4" media="(min-width: 640px)" />
-            </motion.video>
+              <source src={homeMontage} type="video/mp4" />
+            </video>
           )}
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.94)_0%,rgba(0,0,0,0.76)_48%,rgba(0,0,0,0.32)_100%),linear-gradient(180deg,transparent_65%,#000_100%)]" />
         </div>
