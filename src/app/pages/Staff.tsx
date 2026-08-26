@@ -4,11 +4,20 @@ import { Instagram } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import aydinHeadshot from "../../assets/aydin-headshot.webp";
 import trevorHeadshot from "../../assets/trevor-headshot.webp";
+import sophieHeadshot from "../../assets/sophie-headshot.webp";
 
 type Founder = {
   name: string;
   headshot: string;
   instagram: string;
+  bio: ReactNode;
+};
+
+type TeamMember = {
+  name: string;
+  role: string;
+  headshot: string;
+  instagram?: string;
   bio: ReactNode;
 };
 
@@ -52,6 +61,15 @@ const FOUNDERS: Founder[] = [
         to leave their mark on the broader stage of the dance community.
       </>
     ),
+  },
+];
+
+const TEAM: TeamMember[] = [
+  {
+    name: "Sophie Savelli",
+    role: "Mentor",
+    headshot: sophieHeadshot,
+    bio: "Sophie Savelli is a New York City based dancer, teacher, and choreographer who specializes in contemporary, jazz, street fusion, and rhythm tap. Originally from Cleveland, Sophie trained extensively in all forms of dance at her family's dance studio, and began teaching there and at several other studios in North East Ohio before relocating to NYC to attend the Conservatory at Steps on Broadway. She's been a featured performer and dance captain at Cedar Point, has performed at the 24th and 25th annual Choreographer's Carnival, has appeared in concept videos for multiple choreographers in New York, was seen as a guest artist in Tulsa Ballet's \"Strictly Gershwin\", and recently studied choreography under Doug Varone in his workshop hosted at Juilliard. Sophie is also a member of the Dig Tap Society, a tap dance company that performs internationally.",
   },
 ];
 
@@ -151,6 +169,87 @@ const FounderCard = memo(function FounderCard({
 
 FounderCard.displayName = "FounderCard";
 
+type TeamMemberCardProps = {
+  member: TeamMember;
+  index: number;
+};
+
+const TeamMemberCard = memo(function TeamMemberCard({
+  member,
+  index,
+}: TeamMemberCardProps) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={IN_VIEW}
+      transition={{ delay: index * 0.1, duration: 0.6 }}
+      className="[content-visibility:auto] [contain-intrinsic-size:1px_700px] ff-contain-layout grid gap-8 md:grid-cols-[320px_1fr] md:items-center"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2, duration: 0.6 }}
+        style={WILL_CHANGE_TRANSFORM}
+        className="order-2 md:order-2"
+      >
+        <h3 className="font-['Bebas_Neue'] text-4xl tracking-wider text-white mb-1">
+          {member.name}
+        </h3>
+        <p className="font-['Oswald'] text-red-600 text-sm tracking-wide uppercase mb-4">
+          {member.role}
+        </p>
+        <div className="h-0.5 w-16 bg-red-600 mb-4" />
+
+        <p className="text-white/70 text-sm leading-relaxed">{member.bio}</p>
+      </motion.div>
+
+      <div className="relative group order-1 md:order-1">
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          transition={{ duration: 0.3 }}
+          className="relative overflow-hidden transform-gpu"
+          style={WILL_CHANGE_TRANSFORM}
+        >
+          <div className="aspect-[3/4] relative">
+            <ImageWithFallback
+              src={member.headshot}
+              alt={member.name}
+              className="w-full h-full object-cover"
+              sizes="(min-width: 768px) 320px, 100vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60" />
+
+            <motion.div
+              initial={{ scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 + index * 0.1, duration: 0.6 }}
+              className="absolute top-0 right-0 w-2 h-full bg-red-600 origin-top transform-gpu"
+              style={WILL_CHANGE_TRANSFORM}
+            />
+
+            {member.instagram && (
+              <a
+                href={`https://instagram.com/${member.instagram.replace("@", "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm border border-white/20 px-2.5 py-1.5 text-white/90 text-xs font-['Oswald'] tracking-wide hover:bg-red-600 hover:border-red-600 transition-colors duration-300 ff-disable-backdrop ff-opaque-chip"
+              >
+                <Instagram className="w-3.5 h-3.5" />
+                {member.instagram}
+              </a>
+            )}
+          </div>
+        </motion.div>
+      </div>
+    </motion.article>
+  );
+});
+
+TeamMemberCard.displayName = "TeamMemberCard";
+
 export function Staff() {
   return (
     <div className="min-h-screen bg-black">
@@ -203,6 +302,17 @@ export function Staff() {
           </div>
         </div>
       </section>
+
+      {/* Team Grid */}
+      {TEAM.length > 0 && (
+        <section className="py-10 px-6 border-t border-white/10">
+          <div className="max-w-7xl mx-auto space-y-16">
+            {TEAM.map((member, index) => (
+              <TeamMemberCard key={member.name} member={member} index={index} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="py-24 px-6 bg-gradient-to-b from-black to-red-950/20">
