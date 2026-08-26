@@ -238,7 +238,7 @@ const CURRICULUM: CurriculumClass[] = [
     category: "Seminar",
     levels: ["Beginner", "Intermediate", "Advanced", "Open"],
     duration: 45,
-    description: "Bring questions on any topic and take part in a guided open discussion with Take Two faculty.",
+    description: "Bring questions on any topic and take part in a guided open discussion with Take 2 faculty.",
   },
   {
     id: "resume-headshot",
@@ -332,7 +332,7 @@ export function IntensivePackages() {
 
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem("take-two-intensive-plan");
+      const saved = window.localStorage.getItem("take-2-intensive-plan");
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed?.schedule) setSchedule(parsed.schedule);
@@ -347,7 +347,7 @@ export function IntensivePackages() {
   useEffect(() => {
     if (!hasLoaded) return;
     try {
-      window.localStorage.setItem("take-two-intensive-plan", JSON.stringify({ schedule, breaks }));
+      window.localStorage.setItem("take-2-intensive-plan", JSON.stringify({ schedule, breaks }));
     } catch {
       // Keep the current in-memory schedule when storage is unavailable.
     }
@@ -500,7 +500,7 @@ export function IntensivePackages() {
     });
 
     return [
-      "My Take Two Intensive Plan",
+      "My Take 2 Intensive Plan",
       "",
       ...lines,
       `Total training time: ${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`,
@@ -511,20 +511,20 @@ export function IntensivePackages() {
 
   const sendForConsultation = () => {
     const text = buildPlanText();
-    window.location.href = `mailto:${CONSULTATION_EMAIL}?subject=${encodeURIComponent("Take Two intensive consultation")}&body=${encodeURIComponent(text)}`;
+    window.location.href = `mailto:${CONSULTATION_EMAIL}?subject=${encodeURIComponent("Take 2 intensive consultation")}&body=${encodeURIComponent(text)}`;
   };
 
   const exportPlan = async () => {
     const text = buildPlanText();
     if (navigator.share) {
       try {
-        await navigator.share({ title: "My Take Two Intensive Plan", text });
+        await navigator.share({ title: "My Take 2 Intensive Plan", text });
         return;
       } catch (error) {
         if ((error as Error).name === "AbortError") return;
       }
     }
-    window.location.href = `mailto:?subject=${encodeURIComponent("My Take Two intensive plan")}&body=${encodeURIComponent(text)}`;
+    window.location.href = `mailto:?subject=${encodeURIComponent("My Take 2 intensive plan")}&body=${encodeURIComponent(text)}`;
   };
 
   return (
@@ -551,7 +551,7 @@ export function IntensivePackages() {
             </div>
             <div className="border-l border-white/10 pl-6 lg:pb-1 lg:pl-8">
               <p className="max-w-xl text-base leading-7 text-white/60">
-                Explore the Take Two curriculum, find classes for your level, and shape a focused week of training that is entirely your own.
+                Explore the Take 2 curriculum, find classes for your level, and shape a focused week of training that is entirely your own.
               </p>
               <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-xs text-white/50">
                 <span className="flex items-center gap-2"><BookOpen className="h-3.5 w-3.5 text-red-500" /> {CURRICULUM.length} modules</span>
@@ -1055,7 +1055,7 @@ export function IntensivePackages() {
                   </button>
                 </div>
                 <p className="mt-3 text-center text-xs leading-5 text-white/35">
-                  "Send for consultation" goes straight to our Take Two team. "Export schedule" lets you share your plan with a parent, studio director, or anyone else.
+                  "Send for consultation" goes straight to our Take 2 team. "Export schedule" lets you share your plan with a parent, studio director, or anyone else.
                 </p>
                 <p className="mt-4 border-t border-white/10 pt-3 text-center text-[11px] italic leading-5 text-white/30">
                   All times, levels, and details here are just a starting point — we'd love to chat and shape them together with you.
