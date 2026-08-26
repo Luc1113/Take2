@@ -46,6 +46,12 @@ type ScheduledBreak = {
   label: string;
 };
 
+type DragPayload =
+  | { kind: "new"; classId: string; level?: Level }
+  | { kind: "move"; classId: string; fromDay: Day; fromTime: number; level?: Level }
+  | { kind: "break-new"; length: number }
+  | { kind: "break-move"; breakId: string; length: number };
+
 const DAYS: Day[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const LEVELS: (Level | "All")[] = ["All", "Beginner", "Intermediate", "Advanced", "Open"];
 
@@ -59,6 +65,16 @@ const LEVEL_DESCRIPTIONS: Record<Level, string> = {
 const DAY_START = 8 * 60; // 8:00 AM
 const DAY_END = 22 * 60; // 10:00 PM
 const TIME_STEP = 15; // minutes
+const HOUR_HEIGHT = 64; // px per hour on the week grid
+const GRID_HEIGHT = ((DAY_END - DAY_START) / 60) * HOUR_HEIGHT;
+const HOUR_MARKS = Array.from({ length: (DAY_END - DAY_START) / 60 + 1 }, (_, i) => DAY_START + i * 60);
+
+function formatHourLabel(minutes: number) {
+  const hour24 = Math.floor(minutes / 60);
+  const period = hour24 >= 12 ? "PM" : "AM";
+  const hour = hour24 % 12 === 0 ? 12 : hour24 % 12;
+  return `${hour} ${period}`;
+}
 
 const CURRICULUM: CurriculumClass[] = [
   {
@@ -328,7 +344,9 @@ export function IntensivePackages() {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [showLevelInfo, setShowLevelInfo] = useState(false);
   const [dragOverDay, setDragOverDay] = useState<Day | null>(null);
-  const [draggingKey, setDraggingKey] = useState<string | null>(null);
+  const [dragOverTime, setDragOverTime] = useState<number | null>(null);
+  const [dragPayload, setDragPayload] = useState<DragPayload | null>(null);
+  const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     try {
@@ -377,81 +395,121 @@ export function IntensivePackages() {
   }, 0);
 
   const addClass = (classId: string) => {
+    const course = CURRICULUM.find((entry) => entry.id === classId);
+    if (course && hasOverlap(selectedDay, selectedTime, course.duration)) {
+      flashNotice("That time overlaps another class or break — pick a different slot.");
+      return;
+    }
     setSchedule((current) => [
       ...current,
       { classId, day: selectedDay, time: selectedTime, level: selectedClassLevel },
     ]);
     setSchedulingId(null);
     setSelectedClassLevel(undefined);
-    setNotice("Class added to your intensive.");
-    window.setTimeout(() => setNotice(""), 2400);
+    flashNotice("Class added to your intensive.");
   };
 
   const removeClass = (classId: string, day: Day, time: number) => {
     setSchedule((current) => current.filter((item) => !(item.classId === classId && item.day === day && item.time === time)));
   };
 
-  const timeFromDrop = (event: React.DragEvent<HTMLDivElement>, duration: number) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const ratio = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
-    const raw = DAY_START + ratio * (DAY_END - DAY_START);
-    const snapped = Math.round(raw / TIME_STEP) * TIME_STEP;
-    return Math.min(DAY_END - duration, Math.max(DAY_START, snapped));
-  };
-
-  const handleDayDragOver = (event: React.DragEvent<HTMLDivElement>, day: Day) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "copy";
-    if (dragOverDay !== day) setDragOverDay(day);
-  };
-
   const DEFAULT_BREAK_LENGTH = 30;
 
-  const handleDayDrop = (event: React.DragEvent<HTMLDivElement>, day: Day) => {
-    event.preventDefault();
-    setDragOverDay(null);
-    setDraggingKey(null);
-    const raw = event.dataTransfer.getData("application/json");
-    if (!raw) return;
-    let payload: {
-      kind: "new" | "move" | "break-new" | "break-move";
-      classId?: string;
-      level?: Level;
-      fromDay?: Day;
-      fromTime?: number;
-      breakId?: string;
-      length?: number;
-    };
-    try {
-      payload = JSON.parse(raw);
-    } catch {
+  const flashNotice = (text: string) => {
+    setNotice(text);
+    window.setTimeout(() => setNotice(""), 2400);
+  };
+
+  const dragKeyOf = (payload: DragPayload | null) => {
+    if (!payload) return null;
+    if (payload.kind === "new") return payload.classId;
+    if (payload.kind === "move") return `${payload.classId}-${payload.fromDay}-${payload.fromTime}`;
+    if (payload.kind === "break-new") return "break-source";
+    return payload.breakId;
+  };
+  const draggingKey = dragKeyOf(dragPayload);
+
+  // Combined, time-sorted entries for a day, used to figure out where a dragged
+  // item should land and what time it should take on when the order changes.
+  const getDayEntries = (day: Day) => {
+    const classEntries = schedule
+      .filter((item) => item.day === day)
+      .map((item) => {
+        const course = CURRICULUM.find((c) => c.id === item.classId);
+        return { key: `class-${item.classId}-${item.day}-${item.time}`, time: item.time, end: item.time + (course?.duration ?? 0) };
+      });
+    const breakEntries = breaks
+      .filter((item) => item.day === day)
+      .map((item) => ({ key: `break-${item.id}`, time: item.start, end: item.end }));
+    return [...classEntries, ...breakEntries].sort((a, b) => a.time - b.time);
+  };
+
+  const snap = (value: number) => Math.round(value / TIME_STEP) * TIME_STEP;
+
+  // Guards against double-booking: true if [start, start+duration) would
+  // overlap any existing class or break on that day.
+  const hasOverlap = (day: Day, start: number, duration: number, excludeKey?: string) => {
+    const end = start + duration;
+    return getDayEntries(day).some((entry) => entry.key !== excludeKey && start < entry.end && end > entry.time);
+  };
+
+  const durationOf = (payload: DragPayload) => {
+    if (payload.kind === "break-new" || payload.kind === "break-move") return payload.length ?? DEFAULT_BREAK_LENGTH;
+    const course = CURRICULUM.find((entry) => entry.id === payload.classId);
+    return course?.duration ?? 60;
+  };
+
+  const excludeKeyOf = (payload: DragPayload) => {
+    if (payload.kind === "move") return `class-${payload.classId}-${payload.fromDay}-${payload.fromTime}`;
+    if (payload.kind === "break-move") return `break-${payload.breakId}`;
+    return undefined;
+  };
+
+  // Google Calendar-style hit test: reads the cursor's continuous position over
+  // a day column and turns it directly into a clock time, snapped to the grid —
+  // rather than guessing an insertion slot among existing cards. Pointer events
+  // (not the HTML5 drag-and-drop API) mean this works the same on every browser
+  // and on touch, where native drag-and-drop isn't supported at all.
+  const hitTest = (x: number, y: number, duration: number): { day: Day; time: number } | null => {
+    const el = document.elementFromPoint(x, y) as HTMLElement | null;
+    const col = el?.closest("[data-day-col]") as HTMLElement | null;
+    if (!col) return null;
+    const day = col.dataset.dayCol as Day;
+    const rect = col.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (y - rect.top) / rect.height));
+    const raw = DAY_START + ratio * (DAY_END - DAY_START);
+    const time = Math.min(DAY_END - duration, Math.max(DAY_START, snap(raw)));
+    return { day, time };
+  };
+
+  const applyDrop = (day: Day, time: number, payload: DragPayload) => {
+    const duration = durationOf(payload);
+    const excludeKey = excludeKeyOf(payload);
+    if (hasOverlap(day, time, duration, excludeKey)) {
+      flashNotice("No room there — try a different spot.");
       return;
     }
 
     if (payload.kind === "break-new" || payload.kind === "break-move") {
-      const length = payload.length ?? DEFAULT_BREAK_LENGTH;
-      const start = timeFromDrop(event, length);
-      if (payload.kind === "break-move" && payload.breakId) {
+      if (payload.kind === "break-move") {
         setBreaks((current) =>
-          current.map((item) => (item.id === payload.breakId ? { ...item, day, start, end: start + length } : item)),
+          current.map((item) => (item.id === payload.breakId ? { ...item, day, start: time, end: time + duration } : item)),
         );
-        setNotice("Break moved.");
+        flashNotice("Break moved.");
       } else {
         setBreaks((current) => [
           ...current,
-          { id: `break-${Date.now()}`, day, start, end: start + length, label: "Break" },
+          { id: `break-${Date.now()}`, day, start: time, end: time + duration, label: "Break" },
         ]);
-        setNotice("Break added — click it to adjust the length.");
+        flashNotice("Break added — click it to adjust the length.");
       }
-      window.setTimeout(() => setNotice(""), 2400);
       return;
     }
 
     const course = CURRICULUM.find((entry) => entry.id === payload.classId);
     if (!course) return;
-    const time = timeFromDrop(event, course.duration);
 
-    if (payload.kind === "move" && payload.fromDay && payload.fromTime !== undefined) {
+    if (payload.kind === "move") {
       setSchedule((current) =>
         current.map((item) =>
           item.classId === payload.classId && item.day === payload.fromDay && item.time === payload.fromTime
@@ -459,12 +517,62 @@ export function IntensivePackages() {
             : item,
         ),
       );
-      setNotice("Class moved.");
+      flashNotice("Class moved.");
     } else {
-      setSchedule((current) => [...current, { classId: payload.classId!, day, time, level: payload.level ?? course.levels[0] }]);
-      setNotice("Class placed — drag it again anytime to adjust.");
+      setSchedule((current) => [...current, { classId: payload.classId, day, time, level: payload.level ?? course.levels[0] }]);
+      flashNotice("Class placed — drag it again anytime to adjust.");
     }
-    window.setTimeout(() => setNotice(""), 2400);
+  };
+
+  // Starts a custom pointer-driven drag from anywhere on a card. This replaces
+  // the native HTML5 drag-and-drop API (which desktop Safari handles
+  // inconsistently and mobile browsers largely ignore), so dragging behaves the
+  // same on every browser and works with touch as well as a mouse. A small
+  // movement threshold keeps ordinary taps/clicks (expand, edit, remove)
+  // working as normal.
+  const beginDrag = (event: React.PointerEvent, payload: DragPayload) => {
+    if (event.button !== undefined && event.button !== 0) return;
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const duration = durationOf(payload);
+    let dragging = false;
+
+    const onMove = (moveEvent: PointerEvent) => {
+      if (!dragging) {
+        if (Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY) < 6) return;
+        dragging = true;
+        setDragPayload(payload);
+      }
+      moveEvent.preventDefault();
+      setDragPos({ x: moveEvent.clientX, y: moveEvent.clientY });
+      const hit = hitTest(moveEvent.clientX, moveEvent.clientY, duration);
+      setDragOverDay(hit?.day ?? null);
+      setDragOverTime(hit?.time ?? null);
+    };
+
+    const cleanup = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onCancel);
+      setDragPayload(null);
+      setDragPos(null);
+      setDragOverDay(null);
+      setDragOverTime(null);
+    };
+
+    const onUp = (upEvent: PointerEvent) => {
+      if (dragging) {
+        const hit = hitTest(upEvent.clientX, upEvent.clientY, duration);
+        if (hit) applyDrop(hit.day, hit.time, payload);
+      }
+      cleanup();
+    };
+
+    const onCancel = () => cleanup();
+
+    window.addEventListener("pointermove", onMove, { passive: false });
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onCancel);
   };
 
   const updateBreak = (id: string, patch: Partial<ScheduledBreak>) => {
@@ -669,30 +777,19 @@ export function IntensivePackages() {
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
-                        draggable
-                        onDragStart={(event) => {
-                          setDraggingKey(course.id);
-                          (event as unknown as React.DragEvent).dataTransfer.setData(
-                            "application/json",
-                            JSON.stringify({ kind: "new", classId: course.id, level: course.levels[0] }),
-                          );
-                          (event as unknown as React.DragEvent).dataTransfer.effectAllowed = "copy";
-                        }}
-                        onDragEnd={() => {
-                          setDraggingKey(null);
-                          setDragOverDay(null);
-                        }}
                         className={`border bg-[#090909] transition ${draggingKey === course.id ? "opacity-40" : ""} ${
                           isExpanded || isScheduling ? "border-red-600/50 bg-[#0c0909]" : "border-white/10 hover:border-white/25 hover:bg-white/[0.025]"
                         }`}
                       >
                         <button
                           onClick={() => setExpandedId(isExpanded ? null : course.id)}
-                          className="w-full p-4 text-left cursor-grab active:cursor-grabbing"
+                          onPointerDown={(event) => beginDrag(event, { kind: "new", classId: course.id, level: course.levels[0] })}
+                          style={{ touchAction: "pan-y" }}
+                          className="w-full cursor-grab p-4 text-left active:cursor-grabbing"
                           aria-expanded={isExpanded}
                         >
                           <div className="flex items-start gap-3.5">
-                            <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-white/15" />
+                            <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-white/25" />
                             <span className={`mt-0.5 h-9 w-0.5 shrink-0 ${CATEGORY_COLORS[course.category]}`} />
                             <div className="min-w-0 flex-1">
                               <div className="mb-1.5 flex flex-wrap items-center gap-2">
@@ -838,20 +935,9 @@ export function IntensivePackages() {
 
               <div className="mb-3 flex items-center justify-between gap-3 border border-dashed border-amber-500/30 bg-amber-500/[0.04] px-3 py-2.5">
                 <div
-                  draggable
-                  onDragStart={(event) => {
-                    setDraggingKey("break-source");
-                    (event as unknown as React.DragEvent).dataTransfer.setData(
-                      "application/json",
-                      JSON.stringify({ kind: "break-new", length: DEFAULT_BREAK_LENGTH }),
-                    );
-                    (event as unknown as React.DragEvent).dataTransfer.effectAllowed = "copy";
-                  }}
-                  onDragEnd={() => {
-                    setDraggingKey(null);
-                    setDragOverDay(null);
-                  }}
-                  className={`flex cursor-grab items-center gap-2 border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-400 transition active:cursor-grabbing ${
+                  onPointerDown={(event) => beginDrag(event, { kind: "break-new", length: DEFAULT_BREAK_LENGTH })}
+                  style={{ touchAction: "none" }}
+                  className={`flex cursor-grab touch-none items-center gap-2 border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-400 transition active:cursor-grabbing ${
                     draggingKey === "break-source" ? "opacity-40" : "hover:bg-amber-500/20"
                   }`}
                 >
@@ -862,7 +948,23 @@ export function IntensivePackages() {
               </div>
 
               <div className="overflow-x-auto border border-white/10 bg-[#070707] shadow-[0_16px_60px_rgba(0,0,0,0.24)]">
-                <div className="grid min-w-[820px] grid-cols-7 divide-x divide-white/10">
+                <div className="flex min-w-[900px]">
+                  {/* Hour gutter, like the time column on the left of Google Calendar */}
+                  <div className="w-12 shrink-0 border-r border-white/10">
+                    <div className="h-[52px] border-b border-white/10" />
+                    <div className="relative" style={{ height: GRID_HEIGHT }}>
+                      {HOUR_MARKS.map((mark) => (
+                        <div
+                          key={mark}
+                          style={{ top: ((mark - DAY_START) / (DAY_END - DAY_START)) * GRID_HEIGHT }}
+                          className="absolute right-1.5 -translate-y-1/2 text-[9px] uppercase tracking-wider text-white/30"
+                        >
+                          {formatHourLabel(mark)}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   {DAYS.map((day) => {
                     const dayClasses = schedule.filter((item) => item.day === day);
                     const dayBreaks = breaks.filter((item) => item.day === day);
@@ -870,151 +972,158 @@ export function IntensivePackages() {
                       ...dayClasses.map((item) => ({ kind: "class" as const, time: item.time, item })),
                       ...dayBreaks.map((item) => ({ kind: "break" as const, time: item.start, item })),
                     ].sort((a, b) => a.time - b.time);
+                    const previewDuration = dragPayload ? durationOf(dragPayload) : 0;
+                    const showPreview = dragOverDay === day && dragOverTime !== null && dragPayload;
+                    const previewOverlaps =
+                      showPreview && hasOverlap(day, dragOverTime!, previewDuration, excludeKeyOf(dragPayload!));
+
                     return (
-                      <div key={day} className="min-h-[360px]">
-                        <div className="border-b border-white/10 bg-white/[0.035] px-3 py-3 text-center">
+                      <div key={day} className="min-w-[110px] flex-1 border-r border-white/10 last:border-r-0">
+                        <div className="h-[52px] border-b border-white/10 bg-white/[0.035] px-2 py-2 text-center">
                           <p className="font-['Oswald'] text-sm uppercase tracking-wider text-white/80">{day.slice(0, 3)}</p>
-                          <p className="mt-1 text-[10px] uppercase tracking-wider text-white/30">{dayClasses.length} {dayClasses.length === 1 ? "class" : "classes"}</p>
+                          <p className="mt-0.5 text-[10px] uppercase tracking-wider text-white/30">{dayClasses.length} {dayClasses.length === 1 ? "class" : "classes"}</p>
                         </div>
                         <div
-                          onDragOver={(event) => handleDayDragOver(event, day)}
-                          onDragLeave={(event) => {
-                            if (!event.currentTarget.contains(event.relatedTarget as Node)) setDragOverDay(null);
-                          }}
-                          onDrop={(event) => handleDayDrop(event, day)}
-                          className={`space-y-2 p-2 transition ${dragOverDay === day ? "bg-red-600/[0.07] ring-1 ring-inset ring-red-600/40" : ""}`}
+                          data-day-col={day}
+                          className={`relative transition ${dragOverDay === day ? "bg-red-600/[0.05]" : ""}`}
+                          style={{ height: GRID_HEIGHT }}
                         >
-                          {dayEntries.map((entry) =>
-                            entry.kind === "class" ? (
-                              (() => {
-                                const course = CURRICULUM.find((c) => c.id === entry.item.classId);
-                                if (!course) return null;
-                                const dragKey = `${entry.item.classId}-${entry.item.day}-${entry.item.time}`;
-                                return (
-                                  <motion.div
-                                    layout
-                                    initial={{ opacity: 0, scale: 0.96 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    key={dragKey}
-                                    draggable
-                                    onDragStart={(event) => {
-                                      setDraggingKey(dragKey);
-                                      (event as unknown as React.DragEvent).dataTransfer.setData(
-                                        "application/json",
-                                        JSON.stringify({
-                                          kind: "move",
-                                          classId: entry.item.classId,
-                                          fromDay: entry.item.day,
-                                          fromTime: entry.item.time,
-                                          level: entry.item.level,
-                                        }),
-                                      );
-                                      (event as unknown as React.DragEvent).dataTransfer.effectAllowed = "move";
-                                    }}
-                                    onDragEnd={() => {
-                                      setDraggingKey(null);
-                                      setDragOverDay(null);
-                                    }}
-                                    className={`group relative cursor-grab border border-white/10 bg-white/[0.045] p-2.5 transition hover:border-red-600/40 active:cursor-grabbing ${
-                                      draggingKey === dragKey ? "opacity-40" : ""
-                                    }`}
-                                  >
-                                    <GripVertical className="absolute right-8 top-1.5 h-3.5 w-3.5 text-white/15 opacity-0 transition group-hover:opacity-100" />
-                                    <span className={`mb-2 block h-0.5 w-6 ${CATEGORY_COLORS[course.category]}`} />
-                                    <p className="text-[10px] font-semibold uppercase tracking-wider text-red-400">{formatTime(entry.item.time)}</p>
-                                    <p className="mt-1 font-['Oswald'] text-sm leading-snug text-white">{course.name}</p>
-                                    <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[9px] uppercase tracking-wider text-white/35">
-                                      <span>{course.category} · {course.duration}m</span>
-                                      {entry.item.level && (
-                                        <span className="border border-red-600/50 bg-red-600/10 px-1.5 py-0.5 font-semibold text-red-400">{entry.item.level}</span>
-                                      )}
-                                    </div>
-                                    <button onClick={() => removeClass(entry.item.classId, entry.item.day, entry.item.time)} aria-label={`Remove ${course.name}`} className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center text-white/25 opacity-0 transition hover:text-red-400 group-hover:opacity-100 focus:opacity-100">
-                                      <X className="h-3.5 w-3.5" />
-                                    </button>
-                                  </motion.div>
-                                );
-                              })()
-                            ) : (
-                              (() => {
-                                const isEditing = editingBreakId === entry.item.id;
-                                const length = entry.item.end - entry.item.start;
-                                return (
-                                  <motion.div
-                                    layout
-                                    initial={{ opacity: 0, scale: 0.96 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    key={entry.item.id}
-                                    draggable={!isEditing}
-                                    onDragStart={(event) => {
-                                      setDraggingKey(entry.item.id);
-                                      (event as unknown as React.DragEvent).dataTransfer.setData(
-                                        "application/json",
-                                        JSON.stringify({ kind: "break-move", breakId: entry.item.id, length }),
-                                      );
-                                      (event as unknown as React.DragEvent).dataTransfer.effectAllowed = "move";
-                                    }}
-                                    onDragEnd={() => {
-                                      setDraggingKey(null);
-                                      setDragOverDay(null);
-                                    }}
-                                    className={`group relative border border-dashed border-amber-500/40 bg-amber-500/[0.05] p-2.5 transition hover:border-amber-500/70 ${
-                                      isEditing ? "" : "cursor-grab active:cursor-grabbing"
-                                    } ${draggingKey === entry.item.id ? "opacity-40" : ""}`}
-                                  >
-                                    <button
-                                      onClick={() => setEditingBreakId(isEditing ? null : entry.item.id)}
-                                      className="w-full text-left"
-                                    >
-                                      <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-amber-400">
-                                        <Coffee className="h-3 w-3" /> {formatTime(entry.item.start)}–{formatTime(entry.item.end)}
-                                      </p>
-                                      <p className="mt-1 font-['Oswald'] text-sm leading-snug text-white/70">{entry.item.label}</p>
-                                    </button>
-                                    <button onClick={() => removeBreak(entry.item.id)} aria-label={`Remove ${entry.item.label}`} className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center text-white/25 opacity-0 transition hover:text-red-400 group-hover:opacity-100 focus:opacity-100">
-                                      <X className="h-3.5 w-3.5" />
-                                    </button>
+                          {/* Hour gridlines */}
+                          {HOUR_MARKS.map((mark) => (
+                            <div
+                              key={mark}
+                              style={{ top: ((mark - DAY_START) / (DAY_END - DAY_START)) * GRID_HEIGHT }}
+                              className="pointer-events-none absolute inset-x-0 border-t border-white/[0.05]"
+                            />
+                          ))}
 
-                                    {isEditing && (
-                                      <div className="mt-2.5 space-y-2 border-t border-amber-500/20 pt-2.5">
-                                        <input
-                                          value={entry.item.label}
-                                          onChange={(event) => updateBreak(entry.item.id, { label: event.target.value })}
-                                          placeholder="Break"
-                                          className="h-8 w-full border border-white/15 bg-black px-2 text-xs text-white outline-none focus:border-amber-500"
-                                        />
-                                        <div className="flex items-center justify-between text-[9px] uppercase tracking-wider text-white/40">
-                                          <span>Length</span>
-                                          <span className="text-amber-400">{length} min</span>
-                                        </div>
-                                        <input
-                                          type="range"
-                                          min={TIME_STEP}
-                                          max={Math.min(240, DAY_END - entry.item.start)}
-                                          step={TIME_STEP}
-                                          value={length}
-                                          onChange={(event) => {
-                                            const newLength = Number(event.target.value);
-                                            updateBreak(entry.item.id, { end: Math.min(DAY_END, entry.item.start + newLength) });
-                                          }}
-                                          className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-amber-500"
-                                        />
-                                        <button
-                                          onClick={() => setEditingBreakId(null)}
-                                          className="h-8 w-full bg-amber-500 text-[10px] font-bold uppercase tracking-wider text-black transition hover:bg-amber-400"
-                                        >
-                                          Done
-                                        </button>
-                                      </div>
-                                    )}
-                                  </motion.div>
-                                );
-                              })()
-                            ),
+                          {!dayEntries.length && !showPreview && (
+                            <p className="pointer-events-none absolute inset-x-1 top-2 text-center text-[9px] uppercase leading-4 tracking-wider text-white/18">
+                              Drop here
+                            </p>
                           )}
-                          {!dayEntries.length && (
-                            <div className="flex h-24 items-center justify-center border border-dashed border-white/[0.08] text-center text-[9px] uppercase leading-4 tracking-wider text-white/18">
-                              Drop a class<br />or break here
+
+                          {dayEntries.map((entry) => {
+                            const top = ((entry.time - DAY_START) / (DAY_END - DAY_START)) * GRID_HEIGHT;
+
+                            if (entry.kind === "class") {
+                              const course = CURRICULUM.find((c) => c.id === entry.item.classId);
+                              if (!course) return null;
+                              const dragKey = `${entry.item.classId}-${entry.item.day}-${entry.item.time}`;
+                              const height = (course.duration / (DAY_END - DAY_START)) * GRID_HEIGHT;
+                              return (
+                                <motion.div
+                                  layout
+                                  key={dragKey}
+                                  onPointerDown={(event) =>
+                                    beginDrag(event, {
+                                      kind: "move",
+                                      classId: entry.item.classId,
+                                      fromDay: entry.item.day,
+                                      fromTime: entry.item.time,
+                                      level: entry.item.level,
+                                    })
+                                  }
+                                  style={{ touchAction: "none", top, height: Math.max(height, 34) }}
+                                  className={`group absolute inset-x-1 z-10 cursor-grab overflow-hidden border border-white/10 bg-[#151013] p-1.5 text-left transition hover:border-red-600/50 active:cursor-grabbing ${
+                                    draggingKey === dragKey ? "opacity-40" : ""
+                                  }`}
+                                >
+                                  <span className={`absolute inset-y-0 left-0 w-0.5 ${CATEGORY_COLORS[course.category]}`} />
+                                  <p className="truncate pl-1.5 text-[9px] font-semibold uppercase tracking-wider text-red-400">{formatTime(entry.item.time)}</p>
+                                  <p className="truncate pl-1.5 font-['Oswald'] text-xs leading-tight text-white">{course.name}</p>
+                                  <button
+                                    onClick={() => removeClass(entry.item.classId, entry.item.day, entry.item.time)}
+                                    aria-label={`Remove ${course.name}`}
+                                    className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center text-white/25 opacity-0 transition hover:text-red-400 group-hover:opacity-100 focus:opacity-100"
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </motion.div>
+                              );
+                            }
+
+                            const isEditing = editingBreakId === entry.item.id;
+                            const length = entry.item.end - entry.item.start;
+                            const height = (length / (DAY_END - DAY_START)) * GRID_HEIGHT;
+                            return (
+                              <motion.div
+                                layout
+                                key={entry.item.id}
+                                onPointerDown={
+                                  isEditing ? undefined : (event) => beginDrag(event, { kind: "break-move", breakId: entry.item.id, length })
+                                }
+                                style={{ touchAction: "none", top, height: Math.max(height, 30) }}
+                                className={`group absolute inset-x-1 border border-dashed border-amber-500/40 bg-amber-500/[0.08] p-1.5 text-left transition hover:border-amber-500/70 ${
+                                  isEditing ? "z-30 overflow-visible" : "z-10 cursor-grab overflow-hidden active:cursor-grabbing"
+                                } ${draggingKey === entry.item.id ? "opacity-40" : ""}`}
+                              >
+                                <button onClick={() => setEditingBreakId(isEditing ? null : entry.item.id)} className="w-full text-left">
+                                  <p className="truncate text-[9px] font-semibold uppercase tracking-wider text-amber-400">
+                                    <Coffee className="mr-1 inline h-3 w-3" />
+                                    {formatTime(entry.item.start)}–{formatTime(entry.item.end)}
+                                  </p>
+                                  {!isEditing && <p className="truncate font-['Oswald'] text-xs leading-tight text-white/70">{entry.item.label}</p>}
+                                </button>
+                                <button
+                                  onClick={() => removeBreak(entry.item.id)}
+                                  aria-label={`Remove ${entry.item.label}`}
+                                  className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center text-white/25 opacity-0 transition hover:text-red-400 group-hover:opacity-100 focus:opacity-100"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+
+                                {isEditing && (
+                                  <div className="mt-1.5 w-56 space-y-2 border border-amber-500/30 bg-[#0a0a0a] p-3 shadow-2xl">
+                                    <input
+                                      value={entry.item.label}
+                                      onChange={(event) => updateBreak(entry.item.id, { label: event.target.value })}
+                                      placeholder="Break"
+                                      className="h-8 w-full border border-white/15 bg-black px-2 text-xs text-white outline-none focus:border-amber-500"
+                                    />
+                                    <div className="flex items-center justify-between text-[9px] uppercase tracking-wider text-white/40">
+                                      <span>Length</span>
+                                      <span className="text-amber-400">{length} min</span>
+                                    </div>
+                                    <input
+                                      type="range"
+                                      min={TIME_STEP}
+                                      max={Math.min(240, DAY_END - entry.item.start)}
+                                      step={TIME_STEP}
+                                      value={length}
+                                      onChange={(event) => {
+                                        const newLength = Number(event.target.value);
+                                        updateBreak(entry.item.id, { end: Math.min(DAY_END, entry.item.start + newLength) });
+                                      }}
+                                      className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-amber-500"
+                                    />
+                                    <button
+                                      onClick={() => setEditingBreakId(null)}
+                                      className="h-8 w-full bg-amber-500 text-[10px] font-bold uppercase tracking-wider text-black transition hover:bg-amber-400"
+                                    >
+                                      Done
+                                    </button>
+                                  </div>
+                                )}
+                              </motion.div>
+                            );
+                          })}
+
+                          {/* Live drop preview, like the shaded block Google Calendar shows while dragging */}
+                          {showPreview && (
+                            <div
+                              style={{
+                                top: ((dragOverTime! - DAY_START) / (DAY_END - DAY_START)) * GRID_HEIGHT,
+                                height: Math.max((previewDuration / (DAY_END - DAY_START)) * GRID_HEIGHT, 24),
+                              }}
+                              className={`pointer-events-none absolute inset-x-1 z-20 border-2 border-dashed p-1.5 ${
+                                previewOverlaps ? "border-red-500 bg-red-500/20" : "border-red-500 bg-red-500/10"
+                              }`}
+                            >
+                              <p className="truncate text-[9px] font-semibold uppercase tracking-wider text-white">
+                                {formatTime(dragOverTime!)}
+                                {previewOverlaps ? " · No room" : ""}
+                              </p>
                             </div>
                           )}
                         </div>
@@ -1073,6 +1182,24 @@ export function IntensivePackages() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {dragPayload && dragPos && (
+        <div
+          className="pointer-events-none fixed z-50 flex items-center gap-2 border border-red-600/60 bg-black px-3 py-2 text-xs font-semibold uppercase tracking-wider text-white shadow-2xl"
+          style={{ left: dragPos.x + 14, top: dragPos.y + 14 }}
+        >
+          {dragPayload.kind === "break-new" || dragPayload.kind === "break-move" ? (
+            <>
+              <Coffee className="h-3.5 w-3.5 text-amber-400" /> Break
+            </>
+          ) : (
+            <>
+              <GripVertical className="h-3.5 w-3.5 text-red-500" />
+              {CURRICULUM.find((c) => c.id === dragPayload.classId)?.name ?? "Class"}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
