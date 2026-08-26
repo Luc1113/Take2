@@ -9,7 +9,7 @@ export function Navigation() {
     { path: "/", label: "Home" },
     { path: "/staff", label: "Staff" },
     // { path: "/media", label: "Media" }, // hidden for now
-    { path: "/intensive-packages", label: "Build Your Experience" },
+    { path: "/build-schedule", label: "Build Your Experience" },
   ];
 
   return (

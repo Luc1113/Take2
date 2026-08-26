@@ -1,21 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  BookOpen,
-  CalendarDays,
   Check,
   ChevronDown,
   Clock3,
   Coffee,
   GripVertical,
-  HeartHandshake,
   Info,
   Plus,
   RotateCcw,
   Search,
   Send,
   Share2,
-  Sparkles,
   X,
 } from "lucide-react";
 
@@ -35,7 +31,7 @@ type ScheduledClass = {
   classId: string;
   day: Day;
   time: number; // minutes from midnight
-  level?: Level;
+  levels?: Level[];
 };
 
 type ScheduledBreak = {
@@ -47,13 +43,14 @@ type ScheduledBreak = {
 };
 
 type DragPayload =
-  | { kind: "new"; classId: string; level?: Level }
-  | { kind: "move"; classId: string; fromDay: Day; fromTime: number; level?: Level }
+  | { kind: "new"; classId: string; levels?: Level[] }
+  | { kind: "move"; classId: string; fromDay: Day; fromTime: number; levels?: Level[] }
   | { kind: "break-new"; length: number }
   | { kind: "break-move"; breakId: string; length: number };
 
 const DAYS: Day[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const LEVELS: (Level | "All")[] = ["All", "Beginner", "Intermediate", "Advanced", "Open"];
+const LEVEL_ORDER: Level[] = ["Beginner", "Intermediate", "Advanced"];
 
 const LEVEL_DESCRIPTIONS: Record<Level, string> = {
   Beginner: "New to the style or building foundational vocabulary and comfort with movement.",
@@ -65,7 +62,7 @@ const LEVEL_DESCRIPTIONS: Record<Level, string> = {
 const DAY_START = 8 * 60; // 8:00 AM
 const DAY_END = 22 * 60; // 10:00 PM
 const TIME_STEP = 15; // minutes
-const HOUR_HEIGHT = 64; // px per hour on the week grid
+const HOUR_HEIGHT = 40; // px per hour on the week grid
 const GRID_HEIGHT = ((DAY_END - DAY_START) / 60) * HOUR_HEIGHT;
 const HOUR_MARKS = Array.from({ length: (DAY_END - DAY_START) / 60 + 1 }, (_, i) => DAY_START + i * 60);
 
@@ -210,7 +207,7 @@ const CURRICULUM: CurriculumClass[] = [
     levels: ["Beginner", "Intermediate", "Advanced"],
     duration: 90,
     description:
-      "Learn reliable methods for becoming self-sufficient and picking up choreography and its details faster.",
+      "Learn reliable methods for becoming self-sufficient in picking up choreography and its details faster.",
   },
   {
     id: "class-etiquette-mindset",
@@ -247,6 +244,24 @@ const CURRICULUM: CurriculumClass[] = [
     duration: 60,
     description:
       "Translate emotions and human gestures into physical choices while exploring how energy and facial expression shape performance.",
+  },
+  {
+    id: "stories-in-motion",
+    name: "Stories In Motion",
+    category: "Mindfulness",
+    levels: ["Beginner", "Intermediate", "Advanced", "Open"],
+    duration: 60,
+    description:
+      "Places dancers in an environment where they portray all types of narratives through their movement. Designed to explore facial expressions and acting to create clearer visions for an audience.",
+  },
+  {
+    id: "fusion-combo",
+    name: "Combo Class",
+    category: "Fusion",
+    levels: ["Beginner", "Intermediate", "Advanced"],
+    duration: 90,
+    description:
+      "Choreography class that can be used to practice abilities, explore new ones, and test skills in a professional class environment.",
   },
   {
     id: "general-qa",
@@ -316,6 +331,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Art of Taking Class": "bg-emerald-500",
   Mindfulness: "bg-pink-500",
   Seminar: "bg-blue-500",
+  Fusion: "bg-teal-500",
 };
 
 const CONSULTATION_EMAIL = "connect@take2company.com";
@@ -336,7 +352,7 @@ export function IntensivePackages() {
   const [schedulingId, setSchedulingId] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<Day>("Monday");
   const [selectedTime, setSelectedTime] = useState(DAY_START + 60);
-  const [selectedClassLevel, setSelectedClassLevel] = useState<Level | undefined>(undefined);
+  const [selectedClassLevels, setSelectedClassLevels] = useState<Level[]>([]);
   const [schedule, setSchedule] = useState<ScheduledClass[]>([]);
   const [breaks, setBreaks] = useState<ScheduledBreak[]>([]);
   const [editingBreakId, setEditingBreakId] = useState<string | null>(null);
@@ -402,11 +418,29 @@ export function IntensivePackages() {
     }
     setSchedule((current) => [
       ...current,
-      { classId, day: selectedDay, time: selectedTime, level: selectedClassLevel },
+      { classId, day: selectedDay, time: selectedTime, levels: selectedClassLevels },
     ]);
     setSchedulingId(null);
-    setSelectedClassLevel(undefined);
+    setSelectedClassLevels([]);
     flashNotice("Class added to your intensive.");
+  };
+
+  // Levels can only be combined when they're adjacent on the skill ladder
+  // (Beginner+Intermediate, Intermediate+Advanced, or all three) — never
+  // Beginner+Advanced with Intermediate skipped. Open is always solo.
+  const toggleClassLevel = (lvl: Level) => {
+    if (lvl === "Open") {
+      setSelectedClassLevels((current) => (current.length === 1 && current[0] === "Open" ? [] : ["Open"]));
+      return;
+    }
+    setSelectedClassLevels((current) => {
+      const base = current.includes("Open") ? [] : current;
+      const next = base.includes(lvl) ? base.filter((item) => item !== lvl) : [...base, lvl];
+      if (!next.length) return next;
+      const indices = next.map((item) => LEVEL_ORDER.indexOf(item)).sort((a, b) => a - b);
+      const isContiguous = indices.every((idx, i) => i === 0 || idx === indices[i - 1] + 1);
+      return isContiguous ? next : base;
+    });
   };
 
   const removeClass = (classId: string, day: Day, time: number) => {
@@ -519,7 +553,7 @@ export function IntensivePackages() {
       );
       flashNotice("Class moved.");
     } else {
-      setSchedule((current) => [...current, { classId: payload.classId, day, time, level: payload.level ?? course.levels[0] }]);
+      setSchedule((current) => [...current, { classId: payload.classId, day, time, levels: payload.levels ?? [course.levels[0]] }]);
       flashNotice("Class placed — drag it again anytime to adjust.");
     }
   };
@@ -593,7 +627,7 @@ export function IntensivePackages() {
             const course = CURRICULUM.find((entry) => entry.id === item.classId);
             return {
               time: item.time,
-              text: `- ${formatTime(item.time)}: ${course?.name} (${course?.category}, ${course?.duration} min)${item.level ? ` [${item.level}]` : ""}`,
+              text: `- ${formatTime(item.time)}: ${course?.name} (${course?.category}, ${course?.duration} min)${item.levels?.length ? ` [${item.levels.join("/")}]` : ""}`,
             };
           }),
         ...breaks
@@ -649,10 +683,6 @@ export function IntensivePackages() {
             className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)] lg:items-end lg:gap-16"
           >
             <div>
-              <div className="mb-4 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.24em] text-red-500">
-                <Sparkles className="h-3.5 w-3.5" />
-                Built around your goals
-              </div>
               <h1 className="font-['Bebas_Neue'] text-6xl leading-[0.9] tracking-wide sm:text-7xl md:text-8xl">
                 Build Your <span className="text-red-600">Experience</span>
               </h1>
@@ -661,11 +691,6 @@ export function IntensivePackages() {
               <p className="max-w-xl text-base leading-7 text-white/60">
                 Explore the Take 2 curriculum, find classes for your level, and shape a focused week of training that is entirely your own.
               </p>
-              <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-xs text-white/50">
-                <span className="flex items-center gap-2"><BookOpen className="h-3.5 w-3.5 text-red-500" /> {CURRICULUM.length} modules</span>
-                <span className="flex items-center gap-2"><CalendarDays className="h-3.5 w-3.5 text-red-500" /> Seven-day planner</span>
-                <span className="flex items-center gap-2"><HeartHandshake className="h-3.5 w-3.5 text-red-500" /> Consultation ready</span>
-              </div>
             </div>
           </motion.div>
         </div>
@@ -706,9 +731,9 @@ export function IntensivePackages() {
                   type="button"
                   onClick={() => setShowLevelInfo((current) => !current)}
                   aria-label="What do the levels mean?"
-                  className="text-white/30 transition hover:text-red-400"
+                  className="text-red-600 transition hover:text-red-400"
                 >
-                  <Info className="h-3 w-3" />
+                  <Info className="h-4 w-4" />
                 </button>
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -800,15 +825,22 @@ export function IntensivePackages() {
                               <h3 className="font-['Oswald'] text-lg tracking-wide text-white">{course.name}</h3>
                               <div className="mt-2.5 flex flex-wrap gap-1.5">
                                 {course.levels.map((item) => (
-                                  <span key={item} className={`border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${
-                                    item === "Open" ? "border-red-600/60 bg-red-600/10 text-red-400" : "border-white/10 text-white/45"
-                                  }`}>
+                                  <span key={item} className="border border-white/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white/45">
                                     {item}
                                   </span>
                                 ))}
                               </div>
                             </div>
-                            <ChevronDown className={`mt-1.5 h-4 w-4 shrink-0 text-white/30 transition-transform ${isExpanded ? "rotate-180 text-red-500" : ""}`} />
+                            <span
+                              className={`mt-1 flex h-6 w-6 shrink-0 items-center justify-center border transition ${
+                                isExpanded ? "border-red-600 bg-red-600/20" : "border-red-600/60 bg-red-600/10"
+                              }`}
+                            >
+                              <ChevronDown
+                                strokeWidth={2.75}
+                                className={`h-4 w-4 text-red-500 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                              />
+                            </span>
                           </div>
                         </button>
 
@@ -825,7 +857,7 @@ export function IntensivePackages() {
                                 <button
                                   onClick={() => {
                                     setSchedulingId(isScheduling ? null : course.id);
-                                    setSelectedClassLevel(course.levels[0]);
+                                    setSelectedClassLevels([course.levels[0]]);
                                   }}
                                   className={`mt-4 inline-flex h-9 items-center gap-2 px-3.5 text-[11px] font-semibold uppercase tracking-wider transition ${
                                     isScheduled
@@ -858,22 +890,28 @@ export function IntensivePackages() {
                                     </select>
                                   </label>
                                   <div className="text-xs font-semibold uppercase tracking-wider text-white/45">
-                                    Highlight level
+                                    Levels
+                                    <p className="mt-1 text-[9px] font-normal normal-case tracking-normal text-white/30">
+                                      Combine adjacent levels only — e.g. Beginner + Intermediate, not Beginner + Advanced.
+                                    </p>
                                     <div className="mt-2 flex flex-wrap gap-1.5">
-                                      {course.levels.map((lvl) => (
-                                        <button
-                                          key={lvl}
-                                          type="button"
-                                          onClick={() => setSelectedClassLevel(lvl)}
-                                          className={`h-9 border px-2.5 text-[10px] font-semibold uppercase tracking-wider normal-case transition ${
-                                            selectedClassLevel === lvl
-                                              ? "border-red-600 bg-red-600 text-white"
-                                              : "border-white/15 bg-black text-white/55 hover:border-white/35 hover:text-white"
-                                          }`}
-                                        >
-                                          {lvl}
-                                        </button>
-                                      ))}
+                                      {course.levels.map((lvl) => {
+                                        const isSelected = selectedClassLevels.includes(lvl);
+                                        return (
+                                          <button
+                                            key={lvl}
+                                            type="button"
+                                            onClick={() => toggleClassLevel(lvl)}
+                                            className={`h-9 border px-2.5 text-[10px] font-semibold uppercase tracking-wider normal-case transition ${
+                                              isSelected
+                                                ? "border-red-600 bg-red-600 text-white"
+                                                : "border-white/15 bg-black text-white/55 hover:border-white/35 hover:text-white"
+                                            }`}
+                                          >
+                                            {lvl}
+                                          </button>
+                                        );
+                                      })}
                                     </div>
                                   </div>
                                 </div>
@@ -1021,7 +1059,7 @@ export function IntensivePackages() {
                                       classId: entry.item.classId,
                                       fromDay: entry.item.day,
                                       fromTime: entry.item.time,
-                                      level: entry.item.level,
+                                      levels: entry.item.levels,
                                     })
                                   }
                                   style={{ touchAction: "none", top, height: Math.max(height, 34) }}
@@ -1032,6 +1070,9 @@ export function IntensivePackages() {
                                   <span className={`absolute inset-y-0 left-0 w-0.5 ${CATEGORY_COLORS[course.category]}`} />
                                   <p className="truncate pl-1.5 text-[9px] font-semibold uppercase tracking-wider text-red-400">{formatTime(entry.item.time)}</p>
                                   <p className="truncate pl-1.5 font-['Oswald'] text-xs leading-tight text-white">{course.name}</p>
+                                  {entry.item.levels && entry.item.levels.length > 0 && (
+                                    <p className="truncate pl-1.5 text-[8px] uppercase tracking-wider text-white/35">{entry.item.levels.join(" / ")}</p>
+                                  )}
                                   <button
                                     onClick={() => removeClass(entry.item.classId, entry.item.day, entry.item.time)}
                                     aria-label={`Remove ${course.name}`}
@@ -1150,7 +1191,6 @@ export function IntensivePackages() {
                     disabled={!schedule.length}
                     className="flex h-12 w-full items-center justify-center gap-2.5 bg-red-600 px-4 font-['Oswald'] text-sm uppercase tracking-[0.14em] text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-white/[0.07] disabled:text-white/25"
                   >
-                    <HeartHandshake className="h-4.5 w-4.5" />
                     Send for consultation
                     <Send className="h-4 w-4" />
                   </button>

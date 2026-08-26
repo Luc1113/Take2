@@ -78,7 +78,7 @@ Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forwar
             className="mt-8"
           >
             <Link
-              to="/intensive-packages"
+              to="/build-schedule"
               className="inline-block h-12 border border-red-600 bg-red-600 px-8 pt-3 font-['Oswald'] text-sm uppercase tracking-[0.16em] text-white transition-colors duration-300 hover:bg-red-700"
             >
               Build Your Experience
@@ -118,7 +118,7 @@ Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forwar
           >
             <div className="mb-8">
               <h3 className="mb-3 font-['Oswald'] text-xl uppercase tracking-[0.1em] text-white">
-                Who We Are
+                <span className="text-red-600">Who</span> We Are
               </h3>
               <p className="max-w-4xl text-base leading-8 text-white/75 md:text-lg">
                 A New York based dance training program built by professional
@@ -133,7 +133,7 @@ Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forwar
 
             <div className="mb-8 border-t border-white/10 pt-8">
               <h3 className="mb-3 font-['Oswald'] text-xl uppercase tracking-[0.1em] text-white">
-                Why We&apos;re Different
+                <span className="text-red-600">Why</span> We&apos;re Different
               </h3>
               <p className="max-w-4xl text-base leading-8 text-white/75 md:text-lg">
                 Dance training is more than the physical act of learning
@@ -154,7 +154,7 @@ Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forwar
 
             <div className="border-t border-white/10 pt-8">
               <h3 className="mb-3 font-['Oswald'] text-xl uppercase tracking-[0.1em] text-white">
-                What We Offer
+                <span className="text-red-600">What</span> We Offer
               </h3>
               <p className="mb-4 max-w-4xl text-base leading-8 text-white/75 md:text-lg">
                 We bring the intensive to you.

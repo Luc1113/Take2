@@ -4,6 +4,7 @@ import { Home } from "./pages/Home";
 import { Staff } from "./pages/Staff";
 import { Media } from "./pages/Media";
 import { IntensivePackages } from "./pages/IntensivePackages";
+import { AdminLogin } from "./pages/AdminLogin";
 
 export const router = createBrowserRouter([
   {
@@ -13,7 +14,8 @@ export const router = createBrowserRouter([
       { index: true, Component: Home },
       { path: "staff", Component: Staff },
       { path: "media", Component: Media },
-      { path: "intensive-packages", Component: IntensivePackages },
+      { path: "build-schedule", Component: IntensivePackages },
+      { path: "admin", Component: AdminLogin },
     ],
   },
 ]);
