@@ -155,7 +155,7 @@ export function Staff() {
   return (
     <div className="min-h-screen bg-black">
       {/* Hero Section */}
-      <section className="relative py-32 px-6 overflow-hidden">
+      <section className="relative py-12 md:py-16 px-6 overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-b from-red-950/20 to-black" />
           <motion.div
@@ -174,19 +174,18 @@ export function Staff() {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <h1 className="font-['Bebas_Neue'] text-8xl md:text-9xl tracking-wider mb-6">
-              <span className="text-white">Meet Our</span>
-              <br />
+            <h1 className="font-['Bebas_Neue'] text-5xl md:text-6xl tracking-wider mb-4">
+              <span className="text-white">Meet Our</span>{" "}
               <span className="text-red-600">Team</span>
             </h1>
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="h-1 w-48 bg-red-600 mx-auto mb-8 transform-gpu"
+              className="h-1 w-32 bg-red-600 mx-auto mb-4 transform-gpu"
               style={WILL_CHANGE_TRANSFORM}
             />
-            <p className="text-xl text-white/80 max-w-3xl mx-auto">
+            <p className="text-base text-white/80 max-w-3xl mx-auto">
               Learn from industry professionals who are passionate about sharing
               their expertise and helping you achieve your dance goals.
             </p>
@@ -195,7 +194,7 @@ export function Staff() {
       </section>
 
       {/* Founders Grid */}
-      <section className="py-16 px-6">
+      <section className="py-10 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12">
             {FOUNDERS.map((founder, index) => (
@@ -215,20 +214,15 @@ export function Staff() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="font-['Bebas_Neue'] text-6xl md:text-7xl tracking-wider mb-8 text-white">
-              Join Our Classes
+              Growing Team
             </h2>
-            <p className="text-xl text-white/80 mb-12">
+            <p className="text-xl text-white/80 mb-4">
               Experience firsthand the passion and expertise our instructors
               bring to every session.
             </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-red-600 text-white px-12 py-5 font-['Oswald'] text-xl tracking-wider uppercase hover:bg-red-700 transition-colors duration-300 transform-gpu"
-              style={WILL_CHANGE_TRANSFORM}
-            >
-              View Schedule
-            </motion.button>
+            <p className="font-['Oswald'] text-red-600 text-lg tracking-widest uppercase">
+              More Team Members Coming Soon
+            </p>
           </motion.div>
         </div>
       </section>
