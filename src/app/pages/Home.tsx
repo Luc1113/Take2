@@ -223,6 +223,22 @@ Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forwar
           </motion.div>
         </div>
       </section>
+
+      <footer className="border-t border-white/10 bg-black px-5 py-5 text-center">
+        <p className="text-[11px] text-white/30">
+          © 2026 TAKE 2. ALL RIGHTS RESERVED.
+        </p>
+        <p className="mt-1 text-[11px] text-white/20">
+          Designed with ♥ by{" "}
+          <a
+            href="mailto:lucad070103@gmail.com"
+            className="transition-colors duration-300 hover:text-red-500"
+          >
+            Luca
+          </a>
+          .
+        </p>
+      </footer>
     </div>
   );
 }
