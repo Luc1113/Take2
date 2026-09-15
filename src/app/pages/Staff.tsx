@@ -6,6 +6,8 @@ import aydinHeadshot from "../../assets/aydin-headshot.webp";
 import trevorHeadshot from "../../assets/trevor-headshot.webp";
 import sophieHeadshot from "../../assets/sophie-headshot.webp";
 import avaHeadshot from "../../assets/ava-headshot.webp";
+import jennaHeadshot from "../../assets/jenna-headshot.webp";
+import kelseyHeadshot from "../../assets/kelsey-headshot.webp";
 
 type Founder = {
   name: string;
@@ -66,6 +68,20 @@ const FOUNDERS: Founder[] = [
 ];
 
 const TEAM: TeamMember[] = [
+  {
+    name: "Kelsey Kushnir",
+    role: "Mentor",
+    headshot: kelseyHeadshot,
+    instagram: "@kelseykushnir",
+    bio: "Kelsey Kushnir is a professional choreographer and performer based in New York City dedicated to creating meaningful work through movement, storytelling, and emotional connection. A graduate of West Chester University with a Bachelor of Science in Psychology and a minor in Dance Performance, she brings a multidisciplinary perspective to her artistry. Kelsey has worked with choreographers, directors, and mentors such as Chryssie Whitehead, Theresa Stone, Gable Couch, Devin Richey, Gabi Roller, and more. As a choreographer, Kelsey has developed work for both stage and screen where she recently launched “Project Mixtape” and had her choreography featured at Steps on Broadway. Kelsey strives to create work that is honest, collaborative, and emotionally driven, while encouraging performers to find deeper connection and confidence within their movement and storytelling.",
+  },
+  {
+    name: "Jenna Wolfe",
+    role: "Mentor",
+    headshot: jennaHeadshot,
+    instagram: "@jennapwolfe",
+    bio: "Jenna Wolfe is a performing arts educator and choreographer with a love for storytelling. A graduate of Sacred Heart University, Jenna studied within the Dance Company, trained internationally, choreographed for student showcases, and completed her dance minor. She trained at the World Dance Movement intensive, performing in 3 full length pieces in Puglia, Italy. Jenna continued her training at Broadway Dance Center’s Professional Semester under Kendrick Samuels, Mishay Petronelli, Reed Luplau, Ebony Johnson, Miles Keeney, and more. As a mentor, Jenna took on the role of proapprentice in Ali Koinoglou’s Koin & Co Season 10. Her credits include Fox Sports, Choreographer’s Carnival (LA & NYC), Leg Up on Life at Sony Hall, and Young Choreographer’s Festival at Symphony Space. Whether teaching recreational or competitive dance, Jenna prioritizes a healthy environment where dancers can leave embarrassment at the door and explore new movement with their full commitment and curiosity.",
+  },
   {
     name: "Sophie Savelli",
     role: "Mentor",
