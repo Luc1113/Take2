@@ -1,291 +1,121 @@
-import { motion } from "motion/react";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { Play, Image as ImageIcon, Video } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router";
+import { ChevronLeft, ChevronRight, Play, X } from "lucide-react";
+
+type Photo = { kind: "photo"; title: string; thumb: string; full: string; wide?: boolean };
+type Film = { kind: "video"; title: string; thumb: string; src: string; duration: string };
+type Item = Photo | Film;
+type Filter = "all" | "photos" | "videos";
+
+const thumbs = import.meta.glob("../../assets/media/*-thumb.webp", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
+const fulls = import.meta.glob("../../assets/media/*-full.webp", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
+const photo = (number: number, title: string, wide = false): Photo => ({
+  kind: "photo", title, wide,
+  thumb: thumbs[`../../assets/media/sns-2026-${number}-thumb.webp`],
+  full: fulls[`../../assets/media/sns-2026-${number}-full.webp`],
+});
+const film = (slug: string, title: string, duration: string): Film => ({
+  kind: "video", title, duration,
+  thumb: `/media/${slug}.webp`, src: `/media/${slug}.mp4`,
+});
+
+const items: Item[] = [
+  photo(34, "The workshop in motion", true),
+  film("workshop-recap", "Workshop 8:30 recap", "0:59"),
+  photo(8, "Dancers in the studio"),
+  photo(19, "Finding the movement"),
+  film("aydin-trevor-class", "Aydin & Trevor — class montage", "1:05"),
+  photo(20, "In sync"),
+  photo(94, "The full company"),
+  photo(52, "Across the floor"),
+  photo(54, "A moment in class"),
+  film("aydin-trevor-choreography", "Aydin & Trevor — Hand of God", "0:44"),
+  photo(59, "On the beat"),
+  photo(65, "Solo movement"),
+  photo(73, "Center stage"),
+  film("sophie-class", "Sophie — class montage", "1:13"),
+  photo(80, "Strength in motion"),
+  photo(85, "Studio energy"),
+  photo(99, "Learning together"),
+  film("sophie-choreography", "Sophie — Fabulous", "1:00"),
+  photo(107, "Movement in the mirror", true),
+  photo(116, "A day with Take 2"),
+];
+const photos = items.filter((item): item is Photo => item.kind === "photo");
 
 export function Media() {
-  const [activeTab, setActiveTab] = useState<"all" | "photos" | "videos">("all");
+  const [filter, setFilter] = useState<Filter>("all");
+  const [selected, setSelected] = useState<Item | null>(null);
+  const visible = items.filter((item) => filter === "all" || item.kind === (filter === "photos" ? "photo" : "video"));
 
-  const mediaItems = [
-    {
-      type: "video",
-      title: "Spring Showcase 2026",
-      thumbnail: "https://images.unsplash.com/photo-1758670332384-5b9078f5f62b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYW5jZSUyMHBlcmZvcm1hbmNlJTIwc3RhZ2UlMjBsaWdodHN8ZW58MXx8fHwxNzczMzQyODk0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      category: "Performance",
-    },
-    {
-      type: "photo",
-      title: "Advanced Hip-Hop Class",
-      thumbnail: "https://images.unsplash.com/photo-1696627645060-2fccaf4b0b5f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoaXAlMjBob3AlMjBkYW5jZSUyMGNsYXNzJTIwdHJhaW5pbmd8ZW58MXx8fHwxNzczMzQyNzc5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      category: "Class Footage",
-    },
-    {
-      type: "video",
-      title: "Choreography Session",
-      thumbnail: "https://images.unsplash.com/photo-1767866388178-bfbf5727aefe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYW5jZSUyMHN0dWRpbyUyMGNob3Jlb2dyYXBoeSUyMHBlcmZvcm1hbmNlfGVufDF8fHx8MTc3MzM0Mjc3OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      category: "Behind the Scenes",
-    },
-    {
-      type: "photo",
-      title: "Contemporary Workshop",
-      thumbnail: "https://images.unsplash.com/photo-1686172164593-626f19be951c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb250ZW1wb3JhcnklMjBkYW5jZSUyMHJlaGVhcnNhbHxlbnwxfHx8fDE3NzMzNDI3ODB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      category: "Workshops",
-    },
-    {
-      type: "photo",
-      title: "Studio Practice",
-      thumbnail: "https://images.unsplash.com/photo-1683974608358-6606fd6d5000?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYW5jZSUyMHN0dWRpbyUyMG1pcnJvciUyMHByYWN0aWNlfGVufDF8fHx8MTc3MzM0Mjc4MHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      category: "Class Footage",
-    },
-    {
-      type: "video",
-      title: "Breaking Fundamentals",
-      thumbnail: "https://images.unsplash.com/photo-1588671815815-b0cd3b2a9189?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicmVha2RhbmNlJTIwcGVyZm9ybWFuY2UlMjB1cmJhbnxlbnwxfHx8fDE3NzMzNDI4OTd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      category: "Class Footage",
-    },
-    {
-      type: "photo",
-      title: "Group Rehearsal",
-      thumbnail: "https://images.unsplash.com/photo-1758670334659-5a58d87fb8d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYW5jZSUyMGdyb3VwJTIwcmVoZWFyc2FsJTIwc3R1ZGlvfGVufDF8fHx8MTc3MzM0Mjg5NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      category: "Behind the Scenes",
-    },
-    {
-      type: "photo",
-      title: "Ballet Training",
-      thumbnail: "https://images.unsplash.com/photo-1758670331604-16eeb6adb98d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYWxsZXQlMjBkYW5jZXJzJTIwcHJhY3RpY2V8ZW58MXx8fHwxNzczMjY0ODUzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      category: "Class Footage",
-    },
-    {
-      type: "video",
-      title: "Urban Dance Performance",
-      thumbnail: "https://images.unsplash.com/photo-1770196476437-ab1f9517f0bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHJlZXQlMjBkYW5jZSUyMHVyYmFuJTIwcGVyZm9ybWFuY2V8ZW58MXx8fHwxNzczMzQyNzgxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      category: "Performance",
-    },
-  ];
+  useEffect(() => {
+    if (!selected) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelected(null);
+      if (selected.kind !== "photo") return;
+      const index = photos.indexOf(selected);
+      if (event.key === "ArrowRight") setSelected(photos[(index + 1) % photos.length]);
+      if (event.key === "ArrowLeft") setSelected(photos[(index - 1 + photos.length) % photos.length]);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => { document.body.style.overflow = previousOverflow; window.removeEventListener("keydown", onKeyDown); };
+  }, [selected]);
 
-  const filteredMedia =
-    activeTab === "all"
-      ? mediaItems
-      : mediaItems.filter((item) => item.type === (activeTab === "photos" ? "photo" : "video"));
+  const stepPhoto = (direction: -1 | 1) => {
+    if (selected?.kind !== "photo") return;
+    setSelected(photos[(photos.indexOf(selected) + direction + photos.length) % photos.length]);
+  };
 
-  return (
-    <div className="min-h-screen bg-black">
-      {/* Hero Section */}
-      <section className="relative py-32 px-6 overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-red-950/30 to-black" />
-          <motion.div
-            animate={{
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="absolute inset-0 opacity-10"
-            style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1758670332384-5b9078f5f62b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYW5jZSUyMHBlcmZvcm1hbmNlJTIwc3RhZ2UlMjBsaWdodHN8ZW58MXx8fHwxNzczMzQyODk0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          />
+  return <div className="min-h-screen bg-black text-white">
+    <header className="relative overflow-hidden border-b border-white/10 px-5 py-16 sm:px-6 md:py-24">
+      <img src={photo(34, "").full} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-center opacity-30" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/75 to-black/35" />
+      <div className="relative mx-auto max-w-7xl">
+        <p className="mb-3 font-['Oswald'] text-xs uppercase tracking-[0.28em] text-red-500">Take 2 / In the studio</p>
+        <h1 className="font-['Bebas_Neue'] text-7xl leading-[0.9] tracking-wide sm:text-8xl md:text-9xl">The <span className="text-red-600">Media</span> Gallery</h1>
+        <div className="my-6 h-0.5 w-24 bg-red-600" />
+        <p className="max-w-xl text-base leading-7 text-white/75 md:text-lg">A closer look at the movement, the people, and the moments that make Take 2.</p>
+      </div>
+    </header>
+
+    <section className="mx-auto max-w-7xl px-5 pb-20 pt-10 sm:px-6">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-5 border-b border-white/15 pb-5">
+        <div><p className="font-['Oswald'] text-xs uppercase tracking-[0.25em] text-red-500">Workshop 2026</p><h2 className="mt-1 font-['Bebas_Neue'] text-4xl tracking-wide md:text-5xl">Inside the experience</h2></div>
+        <div className="flex gap-1" role="group" aria-label="Filter media">
+          {([["all", "All", 20], ["photos", "Photos", 15], ["videos", "Videos", 5]] as const).map(([id, label, count]) =>
+            <button key={id} type="button" onClick={() => setFilter(id)} aria-pressed={filter === id} className={`px-3 py-2 font-['Oswald'] text-sm uppercase tracking-wider transition-colors sm:px-4 ${filter === id ? "bg-red-600 text-white" : "text-white/60 hover:bg-white/10 hover:text-white"}`}>{label} <span className="ml-1 text-xs opacity-70">{count}</span></button>
+          )}
         </div>
+      </div>
 
-        <div className="max-w-6xl mx-auto relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <h1 className="font-['Bebas_Neue'] text-8xl md:text-9xl tracking-wider mb-6">
-              <span className="text-white">Media</span>
-              <br />
-              <span className="text-red-600">Gallery</span>
-            </h1>
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="h-1 w-48 bg-red-600 mx-auto mb-8"
-            />
-            <p className="text-xl text-white/80 max-w-3xl mx-auto">
-              Explore our collection of performances, class footage, and behind-the-scenes moments 
-              that showcase the energy and artistry of Take 2 Dance Studio.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Filter Tabs */}
-      <section className="py-12 px-6 border-y border-white/10">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="flex justify-center gap-6"
-          >
-            {[
-              { id: "all", label: "All Media", icon: ImageIcon },
-              { id: "photos", label: "Photos", icon: ImageIcon },
-              { id: "videos", label: "Videos", icon: Video },
-            ].map((tab) => (
-              <motion.button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`relative px-8 py-3 font-['Oswald'] text-lg tracking-wider uppercase transition-colors duration-300 flex items-center gap-2 ${
-                  activeTab === tab.id
-                    ? "text-white"
-                    : "text-white/50 hover:text-white/80"
-                }`}
-              >
-                <tab.icon className="w-5 h-5" />
-                {tab.label}
-                {activeTab === tab.id && (
-                  <motion.div
-                    layoutId="tab-indicator"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-              </motion.button>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Media Grid */}
-      <section className="py-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {filteredMedia.map((item, index) => (
-              <motion.div
-                layout
-                key={item.title}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ delay: index * 0.05, duration: 0.4 }}
-                whileHover={{ y: -8 }}
-                className="group cursor-pointer"
-              >
-                <div className="relative overflow-hidden bg-white/5">
-                  <div className="aspect-[4/3] relative">
-                    <ImageWithFallback
-                      src={item.thumbnail}
-                      alt={item.title}
-                      className="w-full h-full object-cover"
-                    />
-                    
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300" />
-
-                    {/* Red accent bar */}
-                    <motion.div
-                      initial={{ scaleX: 0 }}
-                      whileHover={{ scaleX: 1 }}
-                      className="absolute top-0 left-0 right-0 h-1 bg-red-600 origin-left"
-                    />
-
-                    {/* Play button for videos */}
-                    {item.type === "video" && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <motion.div
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:bg-red-700 transition-colors duration-300"
-                        >
-                          <Play className="w-8 h-8 text-white ml-1" fill="white" />
-                        </motion.div>
-                      </div>
-                    )}
-
-                    {/* Content */}
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <div className="flex items-center gap-2 mb-2">
-                        {item.type === "video" ? (
-                          <Video className="w-4 h-4 text-red-600" />
-                        ) : (
-                          <ImageIcon className="w-4 h-4 text-red-600" />
-                        )}
-                        <span className="text-red-600 text-sm font-['Oswald'] uppercase tracking-wide">
-                          {item.category}
-                        </span>
-                      </div>
-                      <h3 className="font-['Oswald'] text-xl text-white tracking-wide">
-                        {item.title}
-                      </h3>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-24 px-6 bg-gradient-to-b from-black to-red-950/10">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { number: "500+", label: "Videos" },
-              { number: "2K+", label: "Photos" },
-              { number: "50+", label: "Performances" },
-              { number: "100K+", label: "Views" },
-            ].map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="text-center"
-              >
-                <div className="font-['Bebas_Neue'] text-6xl text-red-600 mb-2">
-                  {stat.number}
-                </div>
-                <div className="font-['Oswald'] text-white/70 uppercase tracking-wider">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-3">
+        {visible.map((item, index) => <button key={item.kind === "photo" ? item.full : item.src} type="button" onClick={() => setSelected(item)} aria-label={`${item.kind === "video" ? "Play video" : "View photo"}: ${item.title}`} className={`group relative overflow-hidden bg-zinc-900 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 ${filter !== "videos" && item.kind === "photo" && item.wide ? "col-span-2" : ""}`}>
+          <div className={`relative ${filter !== "videos" && item.kind === "photo" && item.wide ? "aspect-[3/2] sm:aspect-[2/1]" : "aspect-[4/5] sm:aspect-[4/3]"}`}>
+            <img src={item.thumb} alt={item.title} loading={index < 3 ? "eager" : "lazy"} decoding="async" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
+            {item.kind === "video" && <span className="absolute left-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-red-600/95 shadow-lg transition-transform group-hover:scale-110 sm:h-16 sm:w-16"><Play className="ml-1 h-6 w-6 fill-white" /></span>}
+            <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 sm:p-5"><div><p className="mb-1 font-['Oswald'] text-[10px] uppercase tracking-[0.18em] text-red-400 sm:text-xs">{item.kind === "video" ? "Film" : "Photo"}</p><h3 className="font-['Oswald'] text-sm leading-tight sm:text-lg">{item.title}</h3></div>{item.kind === "video" && <span className="font-['Oswald'] text-xs text-white/70">{item.duration}</span>}</div>
           </div>
-        </div>
-      </section>
+        </button>)}
+      </div>
+    </section>
 
-      {/* CTA Section */}
-      <section className="py-24 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="font-['Bebas_Neue'] text-6xl md:text-7xl tracking-wider mb-8 text-white">
-              Be Part of the Story
-            </h2>
-            <p className="text-xl text-white/80 mb-12">
-              Join our classes and see yourself featured in our next showcase.
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-red-600 text-white px-12 py-5 font-['Oswald'] text-xl tracking-wider uppercase hover:bg-red-700 transition-colors duration-300"
-            >
-              Enroll Now
-            </motion.button>
-          </motion.div>
-        </div>
-      </section>
-    </div>
-  );
+    <section className="border-t border-white/10 bg-zinc-950 px-5 py-16 text-center sm:px-6">
+      <h2 className="font-['Bebas_Neue'] text-5xl tracking-wide md:text-6xl">Make your <span className="text-red-600">next move.</span></h2>
+      <p className="mx-auto mt-3 max-w-lg text-white/65">Bring the Take 2 experience to your dancers.</p>
+      <Link to="/build-schedule" className="mt-7 inline-block bg-red-600 px-8 py-3 font-['Oswald'] text-sm uppercase tracking-[0.15em] transition-colors hover:bg-red-700">Build your experience</Link>
+    </section>
+
+    {selected && <div role="dialog" aria-modal="true" aria-label={selected.title} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-3 sm:p-8" onClick={() => setSelected(null)}>
+      <button type="button" aria-label="Close gallery" onClick={() => setSelected(null)} className="absolute right-4 top-4 z-10 rounded-full bg-black/70 p-2 text-white hover:bg-red-600"><X className="h-6 w-6" /></button>
+      {selected.kind === "photo" ? <>
+        <button type="button" aria-label="Previous photo" onClick={(event) => { event.stopPropagation(); stepPhoto(-1); }} className="absolute left-3 top-1/2 z-10 rounded-full bg-black/70 p-2 text-white hover:bg-red-600 sm:left-6"><ChevronLeft className="h-6 w-6" /></button>
+        <img src={selected.full} alt={selected.title} onClick={(event) => event.stopPropagation()} className="max-h-[85vh] max-w-full object-contain" />
+        <button type="button" aria-label="Next photo" onClick={(event) => { event.stopPropagation(); stepPhoto(1); }} className="absolute right-3 top-1/2 z-10 rounded-full bg-black/70 p-2 text-white hover:bg-red-600 sm:right-6"><ChevronRight className="h-6 w-6" /></button>
+      </> : <video key={selected.src} controls autoPlay playsInline preload="metadata" poster={selected.thumb} onClick={(event) => event.stopPropagation()} className="max-h-[85vh] w-full max-w-5xl bg-black"><source src={selected.src} type="video/mp4" />Your browser does not support video playback.</video>}
+      <p className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap font-['Oswald'] text-xs uppercase tracking-wider text-white/70 sm:bottom-5">{selected.title}</p>
+    </div>}
+  </div>;
 }

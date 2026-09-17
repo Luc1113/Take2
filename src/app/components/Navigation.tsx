@@ -8,7 +8,7 @@ export function Navigation() {
   const links = [
     { path: "/", label: "Home" },
     { path: "/staff", label: "Staff" },
-    // { path: "/media", label: "Media" }, // hidden for now
+    { path: "/media", label: "Media" },
     { path: "/build-schedule", label: "Build Your Experience" },
   ];
 
@@ -19,19 +19,19 @@ export function Navigation() {
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 ff-disable-backdrop ff-opaque-nav"
     >
-      <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 sm:py-4">
+        <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between sm:gap-0">
           <Link to="/" className="block">
             <motion.img
               src={logo}
               alt="Take 2 Dance Studio"
-              className="h-12 w-auto"
+              className="h-9 w-auto sm:h-12"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             />
           </Link>
 
-          <div className="flex gap-8">
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 sm:gap-8">
             {links.map((link, index) => (
               <motion.div
                 key={link.path}
@@ -42,7 +42,7 @@ export function Navigation() {
               >
                 <Link
                   to={link.path}
-                  className="text-white font-['Oswald'] uppercase tracking-wider text-sm hover:text-red-600 transition-colors duration-300"
+                  className="text-white font-['Oswald'] uppercase tracking-wider text-xs sm:text-sm hover:text-red-600 transition-colors duration-300"
                 >
                   {link.label}
                 </Link>

@@ -5,7 +5,7 @@ export function Root() {
   return (
     <div className="min-h-screen bg-black font-['Work_Sans']">
       <Navigation />
-      <main className="pt-20">
+      <main className="pt-28 sm:pt-20">
         <Outlet />
       </main>
     </div>
