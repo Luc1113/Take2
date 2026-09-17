@@ -20,26 +20,26 @@ const film = (slug: string, title: string, duration: string): Film => ({
 });
 
 const items: Item[] = [
-  photo(34, "The workshop in motion", true),
-  film("workshop-recap", "Workshop 8:30 recap", "0:59"),
-  photo(8, "Dancers in the studio"),
-  photo(19, "Finding the movement"),
-  film("aydin-trevor-class", "Aydin & Trevor — class montage", "1:05"),
-  photo(20, "In sync"),
-  photo(94, "The full company"),
-  photo(52, "Across the floor"),
-  photo(54, "A moment in class"),
+  photo(34, "The Workshop in Motion", true),
+  film("workshop-recap", "Workshop 8/30 Recap", "0:59"),
+  photo(8, "Dancers in the Studio"),
+  photo(19, "Finding the Movement"),
+  film("aydin-trevor-class", "Aydin & Trevor — Class Montage", "1:05"),
+  photo(20, "In Sync"),
+  photo(94, "The Full Company"),
+  photo(52, "Across the Floor"),
+  photo(54, "A Moment in Class"),
   film("aydin-trevor-choreography", "Aydin & Trevor — Hand of God", "0:44"),
-  photo(59, "On the beat"),
-  photo(65, "Solo movement"),
-  photo(73, "Center stage"),
-  film("sophie-class", "Sophie — class montage", "1:13"),
-  photo(80, "Strength in motion"),
-  photo(85, "Studio energy"),
-  photo(99, "Learning together"),
+  photo(59, "On the Beat"),
+  photo(65, "Solo Movement"),
+  photo(73, "Center Stage"),
+  film("sophie-class", "Sophie — Class Montage", "1:13"),
+  photo(80, "Strength in Motion"),
+  photo(85, "Studio Energy"),
+  photo(99, "Learning Together"),
   film("sophie-choreography", "Sophie — Fabulous", "1:00"),
-  photo(107, "Movement in the mirror", true),
-  photo(116, "A day with Take 2"),
+  photo(107, "Mirrored Movement", true),
+  photo(116, "A Day with Take 2"),
 ];
 const photos = items.filter((item): item is Photo => item.kind === "photo");
 
@@ -73,7 +73,7 @@ export function Media() {
       <img src={photo(34, "").full} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-center opacity-30" />
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/75 to-black/35" />
       <div className="relative mx-auto max-w-7xl">
-        <p className="mb-3 font-['Oswald'] text-xs uppercase tracking-[0.28em] text-red-500">Take 2 / In the studio</p>
+        <p className="mb-3 font-['Oswald'] text-xs uppercase tracking-[0.28em] text-red-500">Take 2 / In the Studio</p>
         <h1 className="font-['Bebas_Neue'] text-7xl leading-[0.9] tracking-wide sm:text-8xl md:text-9xl">The <span className="text-red-600">Media</span> Gallery</h1>
         <div className="my-6 h-0.5 w-24 bg-red-600" />
         <p className="max-w-xl text-base leading-7 text-white/75 md:text-lg">A closer look at the movement, the people, and the moments that make Take 2.</p>
@@ -82,7 +82,7 @@ export function Media() {
 
     <section className="mx-auto max-w-7xl px-5 pb-20 pt-10 sm:px-6">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-5 border-b border-white/15 pb-5">
-        <div><p className="font-['Oswald'] text-xs uppercase tracking-[0.25em] text-red-500">Workshop 2026</p><h2 className="mt-1 font-['Bebas_Neue'] text-4xl tracking-wide md:text-5xl">Inside the experience</h2></div>
+        <div><p className="font-['Oswald'] text-xs uppercase tracking-[0.25em] text-red-500">Workshop 2026</p><h2 className="mt-1 font-['Bebas_Neue'] text-4xl tracking-wide md:text-5xl">Inside the Experience</h2></div>
         <div className="flex gap-1" role="group" aria-label="Filter media">
           {([["all", "All", 20], ["photos", "Photos", 15], ["videos", "Videos", 5]] as const).map(([id, label, count]) =>
             <button key={id} type="button" onClick={() => setFilter(id)} aria-pressed={filter === id} className={`px-3 py-2 font-['Oswald'] text-sm uppercase tracking-wider transition-colors sm:px-4 ${filter === id ? "bg-red-600 text-white" : "text-white/60 hover:bg-white/10 hover:text-white"}`}>{label} <span className="ml-1 text-xs opacity-70">{count}</span></button>
@@ -103,9 +103,9 @@ export function Media() {
     </section>
 
     <section className="border-t border-white/10 bg-zinc-950 px-5 py-16 text-center sm:px-6">
-      <h2 className="font-['Bebas_Neue'] text-5xl tracking-wide md:text-6xl">Make your <span className="text-red-600">next move.</span></h2>
+      <h2 className="font-['Bebas_Neue'] text-5xl tracking-wide md:text-6xl">Make Your <span className="text-red-600">Next Move.</span></h2>
       <p className="mx-auto mt-3 max-w-lg text-white/65">Bring the Take 2 experience to your dancers.</p>
-      <Link to="/build-schedule" className="mt-7 inline-block bg-red-600 px-8 py-3 font-['Oswald'] text-sm uppercase tracking-[0.15em] transition-colors hover:bg-red-700">Build your experience</Link>
+      <Link to="/build-schedule" className="mt-7 inline-block bg-red-600 px-8 py-3 font-['Oswald'] text-sm uppercase tracking-[0.15em] transition-colors hover:bg-red-700">Build Your Experience</Link>
     </section>
 
     {selected && <div role="dialog" aria-modal="true" aria-label={selected.title} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-3 sm:p-8" onClick={() => setSelected(null)}>
