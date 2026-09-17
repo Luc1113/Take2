@@ -18,10 +18,11 @@ const film = (slug: string, title: string, duration: string): Film => ({
   kind: "video", title, duration,
   thumb: `/media/${slug}.webp`, src: `/media/${slug}.mp4`,
 });
+const featuredFilm = film("workshop-recap", "Workshop 8/30 Recap", "0:59");
 
 const items: Item[] = [
   photo(34, "The Workshop in Motion", true),
-  film("workshop-recap", "Workshop 8/30 Recap", "0:59"),
+  featuredFilm,
   photo(8, "Dancers in the Studio"),
   photo(19, "Finding the Movement"),
   film("aydin-trevor-class", "Aydin & Trevor — Class Montage", "1:05"),
@@ -46,7 +47,7 @@ const photos = items.filter((item): item is Photo => item.kind === "photo");
 export function Media() {
   const [filter, setFilter] = useState<Filter>("all");
   const [selected, setSelected] = useState<Item | null>(null);
-  const visible = items.filter((item) => filter === "all" || item.kind === (filter === "photos" ? "photo" : "video"));
+  const visible = items.filter((item) => item !== featuredFilm && (filter === "all" || item.kind === (filter === "photos" ? "photo" : "video")));
 
   useEffect(() => {
     if (!selected) return;
@@ -69,23 +70,30 @@ export function Media() {
   };
 
   return <div className="min-h-screen bg-black text-white">
-    <header className="relative overflow-hidden border-b border-white/10 px-5 py-16 sm:px-6 md:py-24">
-      <img src={photo(34, "").full} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-center opacity-30" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/75 to-black/35" />
-      <div className="relative mx-auto max-w-7xl">
-        <p className="mb-3 font-['Oswald'] text-xs uppercase tracking-[0.28em] text-red-500">Take 2 / In the Studio</p>
-        <h1 className="font-['Bebas_Neue'] text-7xl leading-[0.9] tracking-wide sm:text-8xl md:text-9xl">The <span className="text-red-600">Media</span> Gallery</h1>
-        <div className="my-6 h-0.5 w-24 bg-red-600" />
-        <p className="max-w-xl text-base leading-7 text-white/75 md:text-lg">A closer look at the movement, the people, and the moments that make Take 2.</p>
+    <header className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_80%_10%,rgba(153,27,27,0.22),transparent_45%)] px-5 py-12 sm:px-6 md:py-20">
+      <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14">
+        <div>
+          <p className="mb-4 font-['Oswald'] text-xs uppercase tracking-[0.28em] text-red-500">Take 2 Media Gallery / Featured Film</p>
+          <h1 className="font-['Bebas_Neue'] text-6xl leading-[0.9] tracking-wide sm:text-7xl md:text-8xl">Workshop <span className="text-red-600">8/30</span><br />Recap</h1>
+          <div className="my-6 h-0.5 w-24 bg-red-600" />
+          <p className="max-w-md text-base leading-7 text-white/75 md:text-lg">Watch the moments, movement, and people from our 8/30 workshop.</p>
+          <button type="button" onClick={() => setSelected(featuredFilm)} className="mt-8 inline-flex items-center gap-3 bg-red-600 px-7 py-4 font-['Oswald'] text-sm uppercase tracking-[0.15em] transition-colors hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><Play className="h-4 w-4 fill-white" />Play the Recap <span className="border-l border-white/40 pl-3 text-white/75">0:59</span></button>
+        </div>
+        <button type="button" onClick={() => setSelected(featuredFilm)} aria-label="Play Workshop 8/30 Recap" className="group relative block aspect-video w-full overflow-hidden border border-white/10 bg-zinc-900 text-left shadow-[0_24px_80px_rgba(0,0,0,0.45)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500">
+          <img src={featuredFilm.thumb} alt="Dancers at the Take 2 workshop" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <div className="absolute inset-0 bg-black/15 transition-colors group-hover:bg-black/25" />
+          <span className="absolute left-1/2 top-1/2 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-red-600 shadow-xl transition-transform group-hover:scale-110 sm:h-20 sm:w-20"><Play className="ml-1 h-7 w-7 fill-white" /></span>
+          <span className="absolute bottom-4 left-4 font-['Oswald'] text-xs uppercase tracking-[0.18em] text-white drop-shadow-lg sm:bottom-6 sm:left-6">Featured Film · 0:59</span>
+        </button>
       </div>
     </header>
 
     <section className="mx-auto max-w-7xl px-5 pb-20 pt-10 sm:px-6">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-5 border-b border-white/15 pb-5">
-        <div><p className="font-['Oswald'] text-xs uppercase tracking-[0.25em] text-red-500">Workshop 2026</p><h2 className="mt-1 font-['Bebas_Neue'] text-4xl tracking-wide md:text-5xl">Inside the Experience</h2></div>
+        <div><p className="font-['Oswald'] text-xs uppercase tracking-[0.25em] text-red-500">Photos & Films</p><h2 className="mt-1 font-['Bebas_Neue'] text-4xl tracking-wide md:text-5xl">More From the Studio</h2></div>
         <div className="flex gap-1" role="group" aria-label="Filter media">
-          {([["all", "All", 20], ["photos", "Photos", 15], ["videos", "Videos", 5]] as const).map(([id, label, count]) =>
-            <button key={id} type="button" onClick={() => setFilter(id)} aria-pressed={filter === id} className={`px-3 py-2 font-['Oswald'] text-sm uppercase tracking-wider transition-colors sm:px-4 ${filter === id ? "bg-red-600 text-white" : "text-white/60 hover:bg-white/10 hover:text-white"}`}>{label} <span className="ml-1 text-xs opacity-70">{count}</span></button>
+          {([["all", "All"], ["photos", "Photos"], ["videos", "Videos"]] as const).map(([id, label]) =>
+            <button key={id} type="button" onClick={() => setFilter(id)} aria-pressed={filter === id} className={`px-3 py-2 font-['Oswald'] text-sm uppercase tracking-wider transition-colors sm:px-4 ${filter === id ? "bg-red-600 text-white" : "text-white/60 hover:bg-white/10 hover:text-white"}`}>{label}</button>
           )}
         </div>
       </div>
