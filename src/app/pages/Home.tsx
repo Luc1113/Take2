@@ -231,7 +231,7 @@ Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forwar
         <p className="mt-1 text-[11px] text-white/20">
           Designed with ♥ by{" "}
           <a
-            href="mailto:lucad070103@gmail.com"
+            href="https://www.lucawebdesigns.com"
             className="transition-colors duration-300 hover:text-red-500"
           >
             Luca
