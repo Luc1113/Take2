@@ -740,8 +740,7 @@ export function IntensivePackages() {
       <section className="min-h-[calc(100dvh-7rem)] px-4 pb-28 pt-7 xl:hidden">
         {mobileView === "explore" ? (
           <div className="mx-auto max-w-lg">
-            <p className="font-['Oswald'] text-base font-semibold uppercase tracking-[0.18em] text-red-500">01 /</p>
-            <h1 className="mt-1 font-['Bebas_Neue'] text-6xl leading-[0.86] tracking-wide">Choose Your<br />Training</h1>
+            <h1 className="font-['Bebas_Neue'] text-6xl leading-[0.86] tracking-wide">Choose Your<br />Training</h1>
             <p className="mt-4 text-xs text-white/50"><strong className="text-white/80">{filteredClasses.length}</strong> classes found</p>
 
             <label className="relative mt-5 block">
@@ -810,7 +809,6 @@ export function IntensivePackages() {
           </div>
         ) : (
           <div className="mx-auto max-w-lg">
-            <p className="font-['Oswald'] text-base font-semibold uppercase tracking-[0.18em] text-red-500">02 /</p>
             <div className="flex items-end justify-between gap-4">
               <div>
                 <h1 className="mt-1 font-['Bebas_Neue'] text-6xl leading-none tracking-wide">Your Week</h1>
@@ -985,7 +983,6 @@ export function IntensivePackages() {
             <div>
               <div className="mb-4 flex items-end justify-between border-b border-white/10 pb-4">
                 <div>
-                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-red-500">Step 1 / Select</p>
                   <h2 className="font-['Bebas_Neue'] text-4xl leading-none tracking-wide">Explore Classes</h2>
                   <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-white/35">
                     <GripVertical className="h-3 w-3" /> Drag any class onto a day to schedule it
@@ -1169,7 +1166,6 @@ export function IntensivePackages() {
             <aside className="min-w-0 xl:sticky xl:top-24">
               <div className="mb-4 flex items-end justify-between border-b border-white/10 pb-4">
                 <div>
-                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-red-500">Step 2 / Your Week</p>
                   <h2 className="font-['Bebas_Neue'] text-4xl leading-none tracking-wide">Your Week</h2>
                 </div>
                 {(schedule.length > 0 || breaks.length > 0) && (
