@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Check,
+  CalendarDays,
   ChevronDown,
   Clock3,
   Coffee,
@@ -363,6 +364,9 @@ export function IntensivePackages() {
   const [dragOverTime, setDragOverTime] = useState<number | null>(null);
   const [dragPayload, setDragPayload] = useState<DragPayload | null>(null);
   const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
+  const [mobileView, setMobileView] = useState<"explore" | "week">("explore");
+  const [mobileDay, setMobileDay] = useState<Day>("Monday");
+  const [mobileSheet, setMobileSheet] = useState<"class" | "break" | null>(null);
 
   useEffect(() => {
     try {
@@ -410,6 +414,19 @@ export function IntensivePackages() {
     return total + (CURRICULUM.find((course) => course.id === item.classId)?.duration ?? 0);
   }, 0);
 
+  const mobileCourse = schedulingId ? CURRICULUM.find((entry) => entry.id === schedulingId) : undefined;
+  const mobileDayEntries = useMemo(
+    () => [
+      ...schedule
+        .filter((item) => item.day === mobileDay)
+        .map((item) => ({ kind: "class" as const, time: item.time, item })),
+      ...breaks
+        .filter((item) => item.day === mobileDay)
+        .map((item) => ({ kind: "break" as const, time: item.start, item })),
+    ].sort((a, b) => a.time - b.time),
+    [breaks, mobileDay, schedule],
+  );
+
   const addClass = (classId: string) => {
     const course = CURRICULUM.find((entry) => entry.id === classId);
     if (course && hasOverlap(selectedDay, selectedTime, course.duration)) {
@@ -422,7 +439,31 @@ export function IntensivePackages() {
     ]);
     setSchedulingId(null);
     setSelectedClassLevels([]);
+    setMobileSheet(null);
+    setMobileDay(selectedDay);
+    setMobileView("week");
     flashNotice("Class added to your intensive.");
+  };
+
+  const addMobileBreak = () => {
+    if (hasOverlap(selectedDay, selectedTime, DEFAULT_BREAK_LENGTH)) {
+      flashNotice("That time overlaps another class or break — pick a different slot.");
+      return;
+    }
+    setBreaks((current) => [
+      ...current,
+      {
+        id: `break-${Date.now()}`,
+        day: selectedDay,
+        start: selectedTime,
+        end: selectedTime + DEFAULT_BREAK_LENGTH,
+        label: "Break",
+      },
+    ]);
+    setMobileSheet(null);
+    setMobileDay(selectedDay);
+    setMobileView("week");
+    flashNotice("Break added to your intensive.");
   };
 
   // Levels can only be combined when they're adjacent on the skill ladder
@@ -671,7 +712,7 @@ export function IntensivePackages() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <section className="relative overflow-hidden border-b border-white/10 px-5 py-12 sm:px-6 md:py-16">
+      <section className="relative hidden overflow-hidden border-b border-white/10 px-5 py-12 sm:px-6 md:py-16 xl:block">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_20%,rgba(220,38,38,0.16),transparent_27%),linear-gradient(135deg,#090909_0%,#000_58%,#130303_100%)]" />
         <div className="absolute -right-24 -top-28 h-96 w-96 rounded-full border border-red-600/10" />
         <div className="absolute -right-8 -top-12 h-64 w-64 rounded-full border border-red-600/10" />
@@ -696,7 +737,174 @@ export function IntensivePackages() {
         </div>
       </section>
 
-      <section className="px-4 py-8 sm:px-6 md:py-10">
+      <section className="min-h-[calc(100dvh-7rem)] px-4 pb-28 pt-7 xl:hidden">
+        {mobileView === "explore" ? (
+          <div className="mx-auto max-w-lg">
+            <p className="font-['Oswald'] text-base font-semibold uppercase tracking-[0.18em] text-red-500">01 /</p>
+            <h1 className="mt-1 font-['Bebas_Neue'] text-6xl leading-[0.86] tracking-wide">Choose Your<br />Training</h1>
+            <p className="mt-4 text-xs text-white/50"><strong className="text-white/80">{filteredClasses.length}</strong> classes found</p>
+
+            <label className="relative mt-5 block">
+              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search by class, style, or skill..."
+                className="h-12 w-full rounded-md border border-white/15 bg-[#090909] pl-10 pr-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-red-600"
+              />
+            </label>
+
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none]">
+              {LEVELS.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setLevel(item)}
+                  className={`shrink-0 rounded px-3 py-2 text-[10px] font-semibold uppercase tracking-wider transition active:scale-[0.98] ${level === item ? "bg-red-600 text-white" : "border border-white/15 bg-[#090909] text-white/55"}`}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+
+            <label className="mt-2 block text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">
+              Training focus
+              <select value={category} onChange={(event) => setCategory(event.target.value)} className="mt-2 h-11 w-full rounded border border-white/15 bg-[#090909] px-3 text-sm normal-case tracking-normal text-white outline-none focus:border-red-600">
+                {categories.map((item) => <option key={item}>{item}</option>)}
+              </select>
+            </label>
+
+            <div className="mt-5 space-y-2.5">
+              {filteredClasses.map((course) => {
+                const isScheduled = schedule.some((item) => item.classId === course.id);
+                return (
+                  <article key={course.id} className="grid min-h-32 grid-cols-[72px_minmax(0,1fr)_36px] gap-3 rounded-lg border border-white/15 bg-[linear-gradient(115deg,#111,#080808)] p-2.5">
+                    <div className="relative overflow-hidden rounded bg-[#12090a]">
+                      <span className={`absolute inset-y-0 left-0 w-1 ${CATEGORY_COLORS[course.category]}`} />
+                      <span className="grid h-full place-items-center font-['Bebas_Neue'] text-4xl text-white/25">{course.category.charAt(0)}</span>
+                    </div>
+                    <div className="min-w-0 py-1">
+                      <p className="truncate text-[9px] font-bold uppercase tracking-[0.16em] text-red-400">{course.category}</p>
+                      <h2 className="mt-1 font-['Oswald'] text-xl leading-tight text-white">{course.name}</h2>
+                      <p className="mt-1.5 flex items-center gap-1 text-[9px] text-white/45"><Clock3 className="h-3 w-3" /> {course.duration} min · {course.levels.join(" / ")}</p>
+                      <p className="mt-2 line-clamp-2 text-[10px] leading-4 text-white/45">{course.description}</p>
+                    </div>
+                    <button
+                      type="button"
+                      aria-label={`Add ${course.name} to your week`}
+                      onClick={() => {
+                        setSchedulingId(course.id);
+                        setSelectedClassLevels([course.levels[0]]);
+                        setSelectedDay(mobileDay);
+                        setMobileSheet("class");
+                      }}
+                      className={`mt-1 grid h-8 w-8 place-items-center rounded-full border transition active:scale-95 ${isScheduled ? "border-emerald-500/70 text-emerald-400" : "border-red-500 text-white"}`}
+                    >
+                      {isScheduled ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                    </button>
+                  </article>
+                );
+              })}
+              {!filteredClasses.length && <p className="border border-dashed border-white/15 px-5 py-12 text-center text-sm text-white/45">No classes match those filters.</p>}
+            </div>
+          </div>
+        ) : (
+          <div className="mx-auto max-w-lg">
+            <p className="font-['Oswald'] text-base font-semibold uppercase tracking-[0.18em] text-red-500">02 /</p>
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <h1 className="mt-1 font-['Bebas_Neue'] text-6xl leading-none tracking-wide">Your Week</h1>
+                <p className="mt-2 text-xs text-white/45">Tap a day to view and edit.</p>
+              </div>
+              {(schedule.length > 0 || breaks.length > 0) && <button type="button" onClick={() => { setSchedule([]); setBreaks([]); }} className="mb-1 text-[10px] uppercase tracking-wider text-red-400">Clear all</button>}
+            </div>
+
+            <div className="mt-5 grid grid-cols-7 gap-1">
+              {DAYS.map((day) => {
+                const count = schedule.filter((item) => item.day === day).length;
+                return <button key={day} type="button" onClick={() => setMobileDay(day)} className={`border-b px-0.5 py-2 text-center text-[9px] uppercase leading-4 transition ${mobileDay === day ? "border-red-500 text-white" : "border-white/10 text-white/40"}`}><span>{day.slice(0, 3)}</span><br /><strong className="font-medium">{count}</strong></button>;
+              })}
+            </div>
+
+            <h2 className="mt-7 font-['Oswald'] text-xl uppercase tracking-wide">{mobileDay}</h2>
+            <div className="mt-3 space-y-2.5">
+              {mobileDayEntries.map((entry) => {
+                if (entry.kind === "break") return (
+                  <article key={entry.item.id} className="relative rounded border border-amber-500/30 border-l-4 border-l-amber-500 bg-amber-500/10 px-4 py-3">
+                    <p className="text-[10px] text-amber-300/80">{formatTime(entry.item.start)} – {formatTime(entry.item.end)}</p>
+                    <h3 className="mt-1 font-['Oswald'] text-lg">{entry.item.label}</h3>
+                    <button type="button" aria-label="Remove break" onClick={() => removeBreak(entry.item.id)} className="absolute right-2 top-2 p-2 text-white/35"><X className="h-4 w-4" /></button>
+                  </article>
+                );
+                const course = CURRICULUM.find((item) => item.id === entry.item.classId);
+                if (!course) return null;
+                return (
+                  <article key={`${entry.item.classId}-${entry.item.time}`} className="relative overflow-hidden rounded border border-white/10 bg-[#120d0f] px-4 py-3">
+                    <span className={`absolute inset-y-0 left-0 w-1 ${CATEGORY_COLORS[course.category]}`} />
+                    <p className="text-[10px] text-white/45">{formatTime(entry.item.time)} – {formatTime(entry.item.time + course.duration)}</p>
+                    <h3 className="mt-1 font-['Oswald'] text-xl">{course.name}</h3>
+                    <p className="mt-1 text-[9px] uppercase tracking-wider text-red-400">{course.category}{entry.item.levels?.length ? ` · ${entry.item.levels.join(" / ")}` : ""}</p>
+                    <button type="button" aria-label={`Remove ${course.name}`} onClick={() => removeClass(entry.item.classId, entry.item.day, entry.item.time)} className="absolute right-2 top-2 p-2 text-white/35"><X className="h-4 w-4" /></button>
+                  </article>
+                );
+              })}
+              {!mobileDayEntries.length && <p className="rounded border border-dashed border-white/15 px-5 py-10 text-center text-sm text-white/35">Nothing scheduled for {mobileDay} yet.</p>}
+            </div>
+
+            <div className="mt-6 grid gap-2.5">
+              <button type="button" onClick={() => setMobileView("explore")} className="h-12 border border-white/20 text-xs font-semibold uppercase tracking-wider text-white transition active:scale-[0.99]"><Plus className="mr-2 inline h-4 w-4" />Add class</button>
+              <button type="button" onClick={() => { setSelectedDay(mobileDay); setMobileSheet("break"); }} className="h-12 border border-amber-500/40 text-xs font-semibold uppercase tracking-wider text-amber-300 transition active:scale-[0.99]"><Coffee className="mr-2 inline h-4 w-4" />Add break</button>
+              <button type="button" disabled={!schedule.length} onClick={sendForConsultation} className="h-12 bg-red-600 text-xs font-bold uppercase tracking-wider text-white disabled:bg-white/10 disabled:text-white/25">Send for consultation <Send className="ml-2 inline h-4 w-4" /></button>
+              <button type="button" disabled={!schedule.length} onClick={exportPlan} className="h-12 border border-white/15 text-xs font-semibold uppercase tracking-wider text-white/80 disabled:text-white/20"><Share2 className="mr-2 inline h-4 w-4" />Export schedule</button>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <nav aria-label="Schedule views" className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-2 border-t border-white/15 bg-[#080808]/95 px-5 pb-[calc(0.6rem+env(safe-area-inset-bottom))] pt-2.5 backdrop-blur xl:hidden">
+        <button type="button" onClick={() => setMobileView("explore")} className={`flex flex-col items-center gap-1 text-[10px] ${mobileView === "explore" ? "text-red-500" : "text-white/35"}`}><Search className="h-5 w-5" />Explore</button>
+        <button type="button" onClick={() => setMobileView("week")} className={`flex flex-col items-center gap-1 text-[10px] ${mobileView === "week" ? "text-red-500" : "text-white/35"}`}><CalendarDays className="h-5 w-5" />My Week</button>
+      </nav>
+
+      <AnimatePresence>
+        {mobileSheet && (
+          <>
+            <motion.button aria-label="Close scheduling panel" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileSheet(null)} className="fixed inset-0 z-40 bg-black/70 xl:hidden" />
+            <motion.section role="dialog" aria-modal="true" aria-label={mobileSheet === "class" ? "Add class to your week" : "Add break to your week"} initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }} className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-lg rounded-t-2xl border border-white/20 bg-[#111] px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-5 shadow-2xl xl:hidden">
+              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/20" />
+              <button type="button" aria-label="Close" onClick={() => setMobileSheet(null)} className="absolute right-3 top-3 p-2 text-white/50"><X className="h-5 w-5" /></button>
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-red-400">{mobileSheet === "class" ? mobileCourse?.category : "Schedule break"}</p>
+              <h2 className="mt-1 font-['Oswald'] text-3xl leading-tight">{mobileSheet === "class" ? mobileCourse?.name : "Add a Break"}</h2>
+              <p className="mt-1 text-xs text-white/45">Add to your week</p>
+
+              <div className="mt-5 grid grid-cols-7 gap-1">
+                {DAYS.map((day) => <button key={day} type="button" onClick={() => setSelectedDay(day)} className={`rounded border px-0.5 py-2 text-[9px] uppercase ${selectedDay === day ? "border-red-600 bg-red-600 text-white" : "border-white/15 bg-[#090909] text-white/45"}`}>{day.slice(0, 3)}</button>)}
+              </div>
+
+              {mobileSheet === "class" && mobileCourse && (
+                <div className="mt-4">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">Levels</p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {mobileCourse.levels.map((lvl) => <button key={lvl} type="button" onClick={() => toggleClassLevel(lvl)} className={`rounded border px-2.5 py-2 text-[9px] font-semibold uppercase tracking-wider ${selectedClassLevels.includes(lvl) ? "border-red-600 bg-red-600" : "border-white/15 bg-[#090909] text-white/50"}`}>{lvl}</button>)}
+                  </div>
+                </div>
+              )}
+
+              <label className="mt-4 block text-[10px] font-semibold uppercase tracking-wider text-white/40">
+                Start time
+                <select value={selectedTime} onChange={(event) => setSelectedTime(Number(event.target.value))} className="mt-2 h-12 w-full rounded border border-white/20 bg-[#090909] px-3 text-sm normal-case tracking-normal text-white outline-none focus:border-red-600">
+                  {Array.from({ length: ((DAY_END - DAY_START) / TIME_STEP) + 1 }, (_, index) => DAY_START + index * TIME_STEP)
+                    .filter((time) => time + (mobileSheet === "class" ? mobileCourse?.duration ?? 60 : DEFAULT_BREAK_LENGTH) <= DAY_END)
+                    .map((time) => <option key={time} value={time}>{formatTime(time)}</option>)}
+                </select>
+              </label>
+              <button type="button" onClick={() => mobileSheet === "class" && mobileCourse ? addClass(mobileCourse.id) : addMobileBreak()} className="mt-5 h-13 w-full bg-red-600 px-4 py-4 text-xs font-bold uppercase tracking-wider text-white transition active:scale-[0.99]">Add to week →</button>
+            </motion.section>
+          </>
+        )}
+      </AnimatePresence>
+
+      <section className="hidden px-4 py-8 sm:px-6 md:py-10 xl:block">
         <div className="mx-auto max-w-[1400px]">
           <div className="mb-8 grid gap-5 border border-white/10 bg-[#080808] p-4 shadow-[0_16px_60px_rgba(0,0,0,0.28)] md:grid-cols-[minmax(260px,1fr)_200px] md:p-5 xl:grid-cols-[minmax(300px,1fr)_190px_auto] xl:items-end">
             <div className="min-w-0">
@@ -808,7 +1016,7 @@ export function IntensivePackages() {
                       >
                         <button
                           onClick={() => setExpandedId(isExpanded ? null : course.id)}
-                          onPointerDown={(event) => beginDrag(event, { kind: "new", classId: course.id, level: course.levels[0] })}
+                          onPointerDown={(event) => beginDrag(event, { kind: "new", classId: course.id, levels: [course.levels[0]] })}
                           style={{ touchAction: "pan-y" }}
                           className="w-full cursor-grab p-4 text-left active:cursor-grabbing"
                           aria-expanded={isExpanded}
