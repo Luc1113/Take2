@@ -18,7 +18,7 @@ import {
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "../components/ui/dialog";
 
-const DESKTOP_TIP_KEY = "take-2-class-builder-desktop-tip-seen";
+const DESKTOP_TIP_KEY = "take-2-class-builder-desktop-tip-dismissed";
 let desktopTipShownThisSession = false;
 
 type Level = "Beginner" | "Intermediate" | "Advanced" | "Open";
@@ -384,11 +384,9 @@ export function IntensivePackages() {
       if (desktopTipShownThisSession) return;
       try {
         if (window.localStorage.getItem(DESKTOP_TIP_KEY)) return;
-        window.localStorage.setItem(DESKTOP_TIP_KEY, "true");
       } catch {
         // Remember for this session when browser storage is unavailable.
       }
-      desktopTipShownThisSession = true;
       setShowDesktopTip(true);
     };
     checkDesktopTip();
@@ -418,6 +416,18 @@ export function IntensivePackages() {
       // Keep the current in-memory schedule when storage is unavailable.
     }
   }, [schedule, breaks, hasLoaded]);
+
+  const handleDesktopTipChange = (open: boolean) => {
+    setShowDesktopTip(open);
+    if (!open) {
+      desktopTipShownThisSession = true;
+      try {
+        window.localStorage.setItem(DESKTOP_TIP_KEY, "true");
+      } catch {
+        // Remember dismissal in memory when browser storage is unavailable.
+      }
+    }
+  };
 
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(CURRICULUM.map((item) => item.category)))],
@@ -740,7 +750,7 @@ export function IntensivePackages() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Dialog open={showDesktopTip} onOpenChange={setShowDesktopTip}>
+      <Dialog open={showDesktopTip} onOpenChange={handleDesktopTipChange}>
         <DialogContent aria-describedby={undefined} className="max-w-sm border-white/15 bg-[#111] text-white sm:max-w-sm">
           <DialogTitle className="pr-6 font-['Oswald'] text-2xl leading-snug">
             class builder is better on desktop!
