@@ -777,11 +777,7 @@ export function IntensivePackages() {
               {filteredClasses.map((course) => {
                 const isScheduled = schedule.some((item) => item.classId === course.id);
                 return (
-                  <article key={course.id} className="grid min-h-32 grid-cols-[72px_minmax(0,1fr)_36px] gap-3 rounded-lg border border-white/15 bg-[linear-gradient(115deg,#111,#080808)] p-2.5">
-                    <div className="relative overflow-hidden rounded bg-[#12090a]">
-                      <span className={`absolute inset-y-0 left-0 w-1 ${CATEGORY_COLORS[course.category]}`} />
-                      <span className="grid h-full place-items-center font-['Bebas_Neue'] text-4xl text-white/25">{course.category.charAt(0)}</span>
-                    </div>
+                  <article key={course.id} className="grid min-h-32 grid-cols-[minmax(0,1fr)_36px] gap-3 rounded-lg border border-white/15 bg-[linear-gradient(115deg,#111,#080808)] p-2.5">
                     <div className="min-w-0 py-1">
                       <p className="truncate text-[9px] font-bold uppercase tracking-[0.16em] text-red-400">{course.category}</p>
                       <h2 className="mt-1 font-['Oswald'] text-xl leading-tight text-white">{course.name}</h2>
