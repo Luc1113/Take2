@@ -16,6 +16,11 @@ import {
   X,
 } from "lucide-react";
 
+import { Dialog, DialogClose, DialogContent, DialogTitle } from "../components/ui/dialog";
+
+const DESKTOP_TIP_KEY = "take-2-class-builder-desktop-tip-seen";
+let desktopTipShownThisSession = false;
+
 type Level = "Beginner" | "Intermediate" | "Advanced" | "Open";
 type Day = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
 
@@ -364,9 +369,32 @@ export function IntensivePackages() {
   const [dragOverTime, setDragOverTime] = useState<number | null>(null);
   const [dragPayload, setDragPayload] = useState<DragPayload | null>(null);
   const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
+  const [showDesktopTip, setShowDesktopTip] = useState(false);
   const [mobileView, setMobileView] = useState<"explore" | "week">("explore");
   const [mobileDay, setMobileDay] = useState<Day>("Monday");
   const [mobileSheet, setMobileSheet] = useState<"class" | "break" | null>(null);
+
+  useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 1279px) and (pointer: coarse)");
+    const checkDesktopTip = () => {
+      if (!mobile.matches) {
+        setShowDesktopTip(false);
+        return;
+      }
+      if (desktopTipShownThisSession) return;
+      try {
+        if (window.localStorage.getItem(DESKTOP_TIP_KEY)) return;
+        window.localStorage.setItem(DESKTOP_TIP_KEY, "true");
+      } catch {
+        // Remember for this session when browser storage is unavailable.
+      }
+      desktopTipShownThisSession = true;
+      setShowDesktopTip(true);
+    };
+    checkDesktopTip();
+    mobile.addEventListener("change", checkDesktopTip);
+    return () => mobile.removeEventListener("change", checkDesktopTip);
+  }, []);
 
   useEffect(() => {
     try {
@@ -712,6 +740,19 @@ export function IntensivePackages() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <Dialog open={showDesktopTip} onOpenChange={setShowDesktopTip}>
+        <DialogContent aria-describedby={undefined} className="max-w-sm border-white/15 bg-[#111] text-white sm:max-w-sm">
+          <DialogTitle className="pr-6 font-['Oswald'] text-2xl leading-snug">
+            class builder is better on desktop!
+          </DialogTitle>
+          <DialogClose asChild>
+            <button type="button" className="mt-2 h-11 rounded bg-red-600 px-5 font-['Oswald'] text-sm uppercase tracking-wider text-white transition hover:bg-red-700">
+              Got it
+            </button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
+
       <section className="relative hidden overflow-hidden border-b border-white/10 px-5 py-12 sm:px-6 md:py-16 xl:block">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_20%,rgba(220,38,38,0.16),transparent_27%),linear-gradient(135deg,#090909_0%,#000_58%,#130303_100%)]" />
         <div className="absolute -right-24 -top-28 h-96 w-96 rounded-full border border-red-600/10" />
