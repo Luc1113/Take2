@@ -47,9 +47,9 @@ export function Home() {
             transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="flex max-w-3xl flex-col items-start"
           >
-            <h1 className="mb-4 font-['Oswald'] text-xs font-normal uppercase leading-5 tracking-[0.2em] text-red-500 sm:text-sm sm:tracking-[0.24em]">
-              Custom Dance Intensives, Brought to Your Studio
-            </h1>
+            <p className="mb-4 font-['Oswald'] text-xs uppercase tracking-[0.32em] text-red-500">
+              The Company
+            </p>
             <p className="font-['Bebas_Neue'] text-8xl leading-[0.82] tracking-wider sm:text-9xl md:text-[9.5rem]">
               <span className="text-white">TAKE</span>
               <span className="text-red-600"> 2</span>
@@ -60,6 +60,9 @@ export function Home() {
               transition={{ delay: 0.8, duration: 0.6 }}
               className="mt-6 h-0.5 w-24 origin-left bg-red-600"
             />
+            <h1 className="mt-5 font-['Oswald'] text-base font-normal uppercase leading-6 tracking-[0.14em] text-white sm:text-lg">
+              Custom Dance Intensives, Brought to Your Studio
+            </h1>
           </motion.div>
 
           <motion.p
@@ -68,8 +71,11 @@ export function Home() {
             transition={{ delay: 1.2, duration: 0.8 }}
             className="mt-7 max-w-xl text-lg leading-7 text-white/65"
           >
-Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forward. Serving dance studios across New York City and Long Island.
+Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forward.
           </motion.p>
+          <p className="mt-3 max-w-xl font-['Oswald'] text-xs uppercase tracking-[0.2em] text-white/50">
+            Serving dance studios across New York City &amp; Long Island
+          </p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -160,7 +166,7 @@ Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forwar
                 We bring the intensive to you.
               </p>
               <p className="max-w-4xl text-base leading-8 text-white/75 md:text-lg">
-                Serving dance studios across New York City and Long Island, Take 2 travels directly to your studio or chosen location with
+                Take 2 travels directly to your studio or chosen location with
                 a team of professionally vetted dancers, choreographers, and
                 educators who are actively training and working within the
                 dance industry. We provide the infrastructure needed to create

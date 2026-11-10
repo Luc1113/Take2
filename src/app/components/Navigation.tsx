@@ -24,7 +24,7 @@ export function Navigation() {
           <Link to="/" className="block">
             <motion.img
               src={logo}
-              alt="Take 2"
+              alt="Take 2 Dance Studio"
               className="h-9 w-auto sm:h-12"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
