@@ -113,7 +113,7 @@ export function Media() {
     <section className="border-t border-white/10 bg-zinc-950 px-5 py-16 text-center sm:px-6">
       <h2 className="font-['Bebas_Neue'] text-5xl tracking-wide md:text-6xl">Make Your <span className="text-red-600">Next Move.</span></h2>
       <p className="mx-auto mt-3 max-w-lg text-white/65">Bring the Take 2 experience to your dancers.</p>
-      <Link to="/build-schedule" className="mt-7 inline-block bg-red-600 px-8 py-3 font-['Oswald'] text-sm uppercase tracking-[0.15em] transition-colors hover:bg-red-700">Build Your Experience</Link>
+      <Link to="/build-schedule/" className="mt-7 inline-block bg-red-600 px-8 py-3 font-['Oswald'] text-sm uppercase tracking-[0.15em] transition-colors hover:bg-red-700">Build Your Experience</Link>
     </section>
 
     {selected && <div role="dialog" aria-modal="true" aria-label={selected.title} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-3 sm:p-8" onClick={() => setSelected(null)}>

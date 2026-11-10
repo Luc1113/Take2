@@ -7,9 +7,9 @@ export function Navigation() {
 
   const links = [
     { path: "/", label: "Home" },
-    { path: "/staff", label: "Staff" },
-    { path: "/media", label: "Media" },
-    { path: "/build-schedule", label: "Build Your Experience" },
+    { path: "/staff/", label: "Staff" },
+    { path: "/media/", label: "Media" },
+    { path: "/build-schedule/", label: "Build Your Experience" },
   ];
 
   return (
@@ -24,7 +24,7 @@ export function Navigation() {
           <Link to="/" className="block">
             <motion.img
               src={logo}
-              alt="Take 2 Dance Studio"
+              alt="Take 2"
               className="h-9 w-auto sm:h-12"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
@@ -46,7 +46,7 @@ export function Navigation() {
                 >
                   {link.label}
                 </Link>
-                {location.pathname === link.path && (
+                {(location.pathname.endsWith("/") ? location.pathname : location.pathname + "/") === link.path && (
                   <motion.div
                     layoutId="nav-indicator"
                     className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600"

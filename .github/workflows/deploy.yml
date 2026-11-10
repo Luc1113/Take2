@@ -33,17 +33,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      # GitHub Pages has no configurable SPA rewrite. Known routes get a real
-      # <route>/index.html so they return HTTP 200 on direct load/refresh
-      # (keep in sync with src/app/routes.tsx). Unknown URLs fall through to
-      # 404.html, which still boots the app and renders NotFound with a true 404.
-      - name: Add SPA route pages and 404 fallback
-        run: |
-          for route in staff media build-schedule admin; do
-            mkdir -p "dist/$route"
-            cp dist/index.html "dist/$route/index.html"
-          done
-          cp dist/index.html dist/404.html
+      # `npm run build` (scripts/postbuild-seo.mjs) writes per-route <route>/index.html
+      # (HTTP 200 with route-specific metadata), 404.html, sitemap.xml and robots.txt.
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

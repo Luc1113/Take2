@@ -47,13 +47,13 @@ export function Home() {
             transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="flex max-w-3xl flex-col items-start"
           >
-            <p className="mb-4 font-['Oswald'] text-xs uppercase tracking-[0.32em] text-red-500">
-              The Company
-            </p>
-            <h1 className="font-['Bebas_Neue'] text-8xl leading-[0.82] tracking-wider sm:text-9xl md:text-[9.5rem]">
+            <h1 className="mb-4 font-['Oswald'] text-xs font-normal uppercase leading-5 tracking-[0.2em] text-red-500 sm:text-sm sm:tracking-[0.24em]">
+              Custom Dance Intensives, Brought to Your Studio
+            </h1>
+            <p className="font-['Bebas_Neue'] text-8xl leading-[0.82] tracking-wider sm:text-9xl md:text-[9.5rem]">
               <span className="text-white">TAKE</span>
               <span className="text-red-600"> 2</span>
-            </h1>
+            </p>
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
@@ -68,7 +68,7 @@ export function Home() {
             transition={{ delay: 1.2, duration: 0.8 }}
             className="mt-7 max-w-xl text-lg leading-7 text-white/65"
           >
-Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forward.
+Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forward. Serving dance studios across New York City and Long Island.
           </motion.p>
 
           <motion.div
@@ -78,7 +78,7 @@ Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forwar
             className="mt-8"
           >
             <Link
-              to="/build-schedule"
+              to="/build-schedule/"
               className="inline-block h-12 border border-red-600 bg-red-600 px-8 pt-3 font-['Oswald'] text-sm uppercase tracking-[0.16em] text-white transition-colors duration-300 hover:bg-red-700"
             >
               Build Your Experience
@@ -160,7 +160,7 @@ Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forwar
                 We bring the intensive to you.
               </p>
               <p className="max-w-4xl text-base leading-8 text-white/75 md:text-lg">
-                Take 2 travels directly to your studio or chosen location with
+                Serving dance studios across New York City and Long Island, Take 2 travels directly to your studio or chosen location with
                 a team of professionally vetted dancers, choreographers, and
                 educators who are actively training and working within the
                 dance industry. We provide the infrastructure needed to create
