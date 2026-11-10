@@ -74,7 +74,7 @@ export function Home() {
 Where Dance Meets the Mind. A Personalized Intensive Designed to Move You Forward.
           </motion.p>
           <p className="mt-3 max-w-xl font-['Oswald'] text-xs uppercase tracking-[0.2em] text-white/50">
-            Serving dance studios across New York City &amp; Long Island
+            Travelling to dance studios across the Northeast
           </p>
 
           <motion.div

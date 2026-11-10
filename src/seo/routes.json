@@ -2,13 +2,13 @@
   "siteUrl": "https://take2company.com",
   "routes": {
     "/": {
-      "title": "Custom Dance Intensives in NYC & Long Island | Take2",
-      "description": "Bring Take2 to your dance studio. We create custom dance intensive programs for studios across New York City and Long Island, tailored to your studio’s needs.",
+      "title": "Custom Dance Intensives in the Northeast | Take2",
+      "description": "Bring Take2 to your dance studio. We build custom dance intensive programs for studios across the Northeast, tailored to your dancers and goals.",
       "indexable": true
     },
     "/staff/": {
       "title": "Meet the Team | Take2 Dance Intensives",
-      "description": "Meet the professional dancers, choreographers, and educators behind Take2, the team that brings custom dance intensives to studios in NYC and Long Island.",
+      "description": "Meet the professional dancers, choreographers, and educators behind Take2, the team that brings custom dance intensives to studios across the Northeast.",
       "indexable": true
     },
     "/media/": {
